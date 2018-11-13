@@ -44,11 +44,13 @@ import java.util.List;
 import id.co.reich.mockupsouthscape.rest.ApiClient;
 import id.co.reich.mockupsouthscape.rest.ApiInterface;
 import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.Manifest.permission.READ_CONTACTS;
+import static android.Manifest.permission.ACCOUNT_MANAGER;
+import static android.Manifest.permission.GET_ACCOUNTS;
+import static android.Manifest.permission.GET_ACCOUNTS;
+import static android.Manifest.permission.READ_SYNC_STATS;
+import static android.Manifest.permission.WRITE_SYNC_SETTINGS;
 
 /**
  * A login screen that offers login via email/password.
@@ -56,9 +58,9 @@ import static android.Manifest.permission.READ_CONTACTS;
 public class LoginActivity extends AccountAuthenticatorActivity implements LoaderCallbacks<Cursor> {
 
     /**
-     * Id to identity READ_CONTACTS permission request.
+     * Id to identity GET_ACCOUNTS permission request.
      */
-    private static final int REQUEST_READ_CONTACTS = 0;
+    private static final int REQUEST_GET_ACCOUNTS = 0;
 
     /**
      * A dummy authentication store containing known user names and passwords.
@@ -147,15 +149,18 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
         }
-        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+        if (checkSelfPermission(GET_ACCOUNTS) == PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(ACCOUNT_MANAGER) == PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(READ_SYNC_STATS) == PackageManager.PERMISSION_GRANTED
+                && checkSelfPermission(WRITE_SYNC_SETTINGS) == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
+        if (shouldShowRequestPermissionRationale(GET_ACCOUNTS)) {
             // TODO: alert the user with a Snackbar/AlertDialog giving them the permission rationale
             // To use the Snackbar from the design support library, ensure that the activity extends
             // AppCompatActivity and uses the Theme.AppCompat theme.
         } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
+            requestPermissions(new String[]{GET_ACCOUNTS, ACCOUNT_MANAGER, READ_SYNC_STATS, WRITE_SYNC_SETTINGS}, REQUEST_GET_ACCOUNTS);
         }
         return false;
     }
@@ -166,7 +171,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
+        if (requestCode == REQUEST_GET_ACCOUNTS) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 populateAutoComplete();
             }
@@ -253,7 +258,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
                 mAccountManager.setAuthToken(account, mAuthTokenType, authToken);
                 setAccountAuthenticatorResult(data);
                 setResult(RESULT_OK, res);
-                finish();
+//                finish();
             } else {
                 // guess not
                 Log.d(TAG, "Account NOT added");
