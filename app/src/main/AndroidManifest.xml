@@ -7,6 +7,12 @@
     <uses-permission android:name="android.permission.ACCOUNT_MANAGER"
         tools:ignore="ProtectedPermissions" />
 
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission android:name="android.permission.READ_SYNC_STATS" />
+    <uses-permission android:name="android.permission.READ_SYNC_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SYNC_SETTINGS" />
+
     <!-- To auto-complete the email text field in the login form with the user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
@@ -31,8 +37,7 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_login" />
-
+            android:label="@string/title_activity_main" />
         <service
             android:name="id.co.reich.mockupsouthscape.auth.AuthenticatorService"
             android:exported="true"

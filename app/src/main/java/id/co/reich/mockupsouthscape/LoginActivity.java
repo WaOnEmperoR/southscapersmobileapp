@@ -1,8 +1,12 @@
 package id.co.reich.mockupsouthscape;
 
+import android.accounts.Account;
+import android.accounts.AccountAuthenticatorActivity;
+import android.accounts.AccountManager;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 
@@ -49,7 +53,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AccountAuthenticatorActivity implements LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity READ_CONTACTS permission request.
@@ -75,6 +79,18 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
     private View mLoginFormView;
     private ApiInterface mApiService;
     private String TAG = "Login";
+    private AccountManager mAccountManager;
+    private String mAuthTokenType;
+    private String accountName;
+
+    public final static String ARG_ACCOUNT_TYPE = "ACCOUNT_TYPE";
+    public final static String ARG_AUTH_TYPE = "AUTH_TYPE";
+    public final static String ARG_ACCOUNT_NAME = "ACCOUNT_NAME";
+    public final static String ARG_IS_ADDING_NEW_ACCOUNT = "IS_ADDING_ACCOUNT";
+
+    public static final String KEY_ERROR_MESSAGE = "ERR_MSG";
+
+    public final static String PARAM_USER_PASS = "USER_PASS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +122,17 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
+
+        mAccountManager = AccountManager.get(getBaseContext());
+
+        // If this is a first time adding, then this will be null
+        accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);
+        mAuthTokenType = getIntent().getStringExtra(ARG_AUTH_TYPE);
+
+        if (mAuthTokenType == null)
+            mAuthTokenType = getString(R.string.auth_type);
+
+        findAccount(accountName);
     }
 
     private void populateAutoComplete() {
@@ -197,6 +224,50 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
+    }
+
+    private void userSignIn(String authToken, String accountName, String password)
+    {
+        if (accountName.length() > 0)
+        {
+            Bundle data = new Bundle();
+            data.putString(AccountManager.KEY_ACCOUNT_NAME, accountName);
+            data.putString(AccountManager.KEY_ACCOUNT_TYPE, mAuthTokenType);
+            data.putString(AccountManager.KEY_AUTHTOKEN, authToken);
+            data.putString(PARAM_USER_PASS, password);
+
+            Bundle userData = new Bundle();
+            data.putBundle(AccountManager.KEY_USERDATA, userData);
+
+            //Make it an intent to be passed back to the Android Authenticator
+            final Intent res = new Intent();
+            res.putExtras(data);
+
+            //Create the new account with Account Name and TYPE
+            final Account account = new Account(accountName, mAuthTokenType);
+
+            //Add the account to the Android System
+            if (mAccountManager.addAccountExplicitly(account, password, userData)) {
+                // worked
+                Log.d(TAG, "Account added");
+                mAccountManager.setAuthToken(account, mAuthTokenType, authToken);
+                setAccountAuthenticatorResult(data);
+                setResult(RESULT_OK, res);
+                finish();
+            } else {
+                // guess not
+                Log.d(TAG, "Account NOT added");
+            }
+        }
+    }
+
+    public Account findAccount(String accountName) {
+        for (Account account : mAccountManager.getAccounts())
+            if (TextUtils.equals(account.name, accountName) && TextUtils.equals(account.type, getString(R.string.auth_type))) {
+                System.out.println("FOUND");
+                return account;
+            }
+        return null;
     }
 
     private boolean isEmailValid(String email) {
@@ -349,7 +420,8 @@ public class LoginActivity extends Activity implements LoaderCallbacks<Cursor> {
 
             if (success) {
                 Log.d(TAG, "Successfully Login, Username and Password are correct");
-//                finish();
+
+                userSignIn(token, mEmail, mPassword);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
