@@ -7,6 +7,7 @@
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
     <string name="action_sign_in">Sign in or register</string>
+    <string name="action_get_detail">Get User Detail</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
@@ -18,5 +19,14 @@
     <!-- Strings related to authentication -->
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="auth_type">id.co.reich.auth_example</string>
+    <string name="auth_type">id.co.reich.auth_southscapers</string>
+    <string name="title_activity_user_main">UserMainActivity</string>
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
 </resources>

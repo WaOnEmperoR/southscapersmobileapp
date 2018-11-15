@@ -3,6 +3,8 @@ package id.co.reich.mockupsouthscape;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
@@ -44,7 +46,10 @@ import java.util.List;
 import id.co.reich.mockupsouthscape.rest.ApiClient;
 import id.co.reich.mockupsouthscape.rest.ApiInterface;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.Headers;
 
 import static android.Manifest.permission.ACCOUNT_MANAGER;
 import static android.Manifest.permission.GET_ACCOUNTS;
@@ -119,6 +124,15 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
             @Override
             public void onClick(View view) {
                 attemptLogin();
+            }
+        });
+
+        Button mCheckUserButton = findViewById(R.id.check_account);
+        mCheckUserButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "Enter");
+                getAuthTokenUser(mEmailView.getText().toString());
             }
         });
 
@@ -231,6 +245,32 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
         }
     }
 
+    private void fillSessionData(String authToken)
+    {
+        Log.d(TAG, "Fill Data");
+
+        mApiService = ApiClient.getClient().create(ApiInterface.class);
+        Call<ResponseBody> call = mApiService.details("application/json", "Bearer " + authToken);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful())
+                {
+                    try {
+                        Log.d(TAG, response.body().string());
+                    } catch (IOException e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e(TAG, t.getMessage());
+            }
+        });
+    }
+
     private void userSignIn(String authToken, String accountName, String password)
     {
         if (accountName.length() > 0)
@@ -258,7 +298,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
                 mAccountManager.setAuthToken(account, mAuthTokenType, authToken);
                 setAccountAuthenticatorResult(data);
                 setResult(RESULT_OK, res);
-//                finish();
             } else {
                 // guess not
                 Log.d(TAG, "Account NOT added");
@@ -267,12 +306,40 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
     }
 
     public Account findAccount(String accountName) {
-        for (Account account : mAccountManager.getAccounts())
-            if (TextUtils.equals(account.name, accountName) && TextUtils.equals(account.type, getString(R.string.auth_type))) {
-                System.out.println("FOUND");
+        for (Account account : mAccountManager.getAccounts()){
+            Log.d(TAG, "Account : " + account.name + "--" + account.type);
+            if (TextUtils.equals(account.name, accountName) && TextUtils.equals(account.type, mAuthTokenType)) {
+                Log.d(TAG, "FOUND");
                 return account;
             }
+        }
         return null;
+    }
+
+    public void getAuthTokenUser(String userAccount)
+    {
+        final Account acc = findAccount(userAccount);
+
+        if (acc!=null)
+        {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String token = "";
+                        token = mAccountManager.blockingGetAuthToken(acc, mAuthTokenType, true);
+                        Log.d(TAG, "UserToken >" + token);
+                    } catch (OperationCanceledException e) {
+                        Log.e(TAG, e.getMessage());
+                    } catch (IOException e) {
+                        Log.e(TAG, e.getMessage());
+                    } catch (AuthenticatorException e) {
+                        Log.e(TAG, e.getMessage());
+                    }
+                }
+            }).start();
+
+        }
     }
 
     private boolean isEmailValid(String email) {
@@ -364,7 +431,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
         mEmailView.setAdapter(adapter);
     }
 
-
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -427,6 +493,10 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
                 Log.d(TAG, "Successfully Login, Username and Password are correct");
 
                 userSignIn(token, mEmail, mPassword);
+                fillSessionData(token);
+
+                Intent intent = new Intent(LoginActivity.this,UserMainActivity.class);
+                startActivity(intent);
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();
