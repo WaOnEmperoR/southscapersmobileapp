@@ -20,7 +20,7 @@ public class SessionManager {
         editor = pref.edit();
     }
 
-    public void createLoginSession(String userid, String username, String email, String gender, String birth_date, String address, String image_avatar, String auth_token) {
+    public void createLoginSession(String userid, String username, String email, String gender, String birth_date, String address, String image_avatar) {
         editor.putBoolean(Utils.IS_LOGIN, true);
         editor.putString(Utils.KEY_USER_ID, userid );
         editor.putString(Utils.KEY_USERNAME, username);
@@ -46,6 +46,11 @@ public class SessionManager {
         HashMap<String, String> user = new HashMap<String, String>();
         user.put(Utils.KEY_USER_ID, pref.getString(Utils.KEY_USER_ID, null));
         user.put(Utils.KEY_USERNAME, pref.getString(Utils.KEY_USERNAME, null));
+        user.put(Utils.KEY_EMAIL, pref.getString(Utils.KEY_EMAIL, null));
+        user.put(Utils.KEY_GENDER, pref.getString(Utils.KEY_GENDER, null));
+        user.put(Utils.KEY_BIRTH_DATE, pref.getString(Utils.KEY_BIRTH_DATE, null));
+        user.put(Utils.KEY_ADDRESS, pref.getString(Utils.KEY_ADDRESS, null));
+        user.put(Utils.KEY_IMAGE_AVATAR, pref.getString(Utils.KEY_IMAGE_AVATAR, null));
         return user;
     }
 

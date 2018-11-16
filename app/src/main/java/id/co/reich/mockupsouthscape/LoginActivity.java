@@ -36,6 +36,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.gms.common.AccountPicker;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -66,6 +68,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
      * Id to identity GET_ACCOUNTS permission request.
      */
     private static final int REQUEST_GET_ACCOUNTS = 0;
+    private static final int REQUEST_CODE_EMAIL = 1;
 
     /**
      * A dummy authentication store containing known user names and passwords.
@@ -98,6 +101,10 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
     public static final String KEY_ERROR_MESSAGE = "ERR_MSG";
 
     public final static String PARAM_USER_PASS = "USER_PASS";
+
+    private AppController app() {
+        return AppController.getInstance();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,7 +156,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
             mAuthTokenType = getString(R.string.auth_type);
 
         findAccount(accountName);
-    }
+   }
 
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
@@ -247,8 +254,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
 
     private void fillSessionData(String authToken)
     {
-        Log.d(TAG, "Fill Data");
-
         mApiService = ApiClient.getClient().create(ApiInterface.class);
         Call<ResponseBody> call = mApiService.details("application/json", "Bearer " + authToken);
         call.enqueue(new Callback<ResponseBody>() {
@@ -257,8 +262,25 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
                 if (response.isSuccessful())
                 {
                     try {
-                        Log.d(TAG, response.body().string());
+                        JSONObject jsonOuter = new JSONObject(response.body().string());
+
+                        JSONObject jsonInner = new JSONObject(jsonOuter.get("user").toString());
+
+                        Log.d(TAG, jsonInner.getString("name"));
+                        Log.d(TAG, jsonInner.getString("email"));
+                        Log.d(TAG, jsonInner.getString("gender"));
+                        app().getSession().createLoginSession(
+                                jsonInner.getString("id"),
+                                jsonInner.getString("name"),
+                                jsonInner.getString("email"),
+                                jsonInner.getString("gender"),
+                                jsonInner.getString("birth_date"),
+                                jsonInner.getString("address"),
+                                jsonInner.getString("img_avatar")
+                        );
                     } catch (IOException e) {
+                        Log.e(TAG, e.getMessage());
+                    } catch (JSONException e) {
                         Log.e(TAG, e.getMessage());
                     }
                 }
@@ -415,6 +437,14 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
         }
 
         addEmailsToAutoComplete(emails);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_EMAIL && resultCode == RESULT_OK) {
+            String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+            Log.d(TAG, "AccountName> " + accountName);
+        }
     }
 
     @Override
