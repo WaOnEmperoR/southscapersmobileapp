@@ -449,7 +449,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
         super.onResume();
 
         if (app().getSession().isLoggedIn()) {
-            Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
+            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
             finish();
@@ -531,7 +531,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
                 userSignIn(token, mEmail, mPassword);
                 fillSessionData(token);
 
-                Intent intent = new Intent(LoginActivity.this,UserMainActivity.class);
+                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
                 startActivity(intent);
                 finish();
             } else {

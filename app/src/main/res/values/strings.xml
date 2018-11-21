@@ -29,4 +29,9 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_example">Example action</string>
+
+    <!-- Strings related to drawer -->
+    <string name="drawer_home">Home</string>
+    <string name="drawer_settings">Settings</string>
+    <string name="drawer_logout">Logout</string>
 </resources>
