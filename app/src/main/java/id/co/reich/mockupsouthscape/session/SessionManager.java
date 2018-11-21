@@ -10,9 +10,9 @@ import id.co.reich.mockupsouthscape.LoginActivity;
 
 public class SessionManager {
     SharedPreferences pref;
-    SharedPreferences.Editor editor;
-    Context mContext;
-    int PRIVATE_MODE = 0;
+    public SharedPreferences.Editor editor;
+    private Context mContext;
+    private int PRIVATE_MODE = 0;
 
     public SessionManager(Context context) {
         this.mContext = context;

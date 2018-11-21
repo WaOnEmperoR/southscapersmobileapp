@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 
-import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
 
 import android.content.CursorLoader;
@@ -36,8 +35,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.gms.common.AccountPicker;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,10 +48,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.http.Headers;
 
 import static android.Manifest.permission.ACCOUNT_MANAGER;
-import static android.Manifest.permission.GET_ACCOUNTS;
 import static android.Manifest.permission.GET_ACCOUNTS;
 import static android.Manifest.permission.READ_SYNC_STATS;
 import static android.Manifest.permission.WRITE_SYNC_SETTINGS;
@@ -67,7 +62,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
     /**
      * Id to identity GET_ACCOUNTS permission request.
      */
-    private static final int REQUEST_GET_ACCOUNTS = 0;
+    private static final int REQUEST_PERMISSIONS = 0;
     private static final int REQUEST_CODE_EMAIL = 1;
 
     /**
@@ -88,7 +83,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
     private View mProgressView;
     private View mLoginFormView;
     private ApiInterface mApiService;
-    private String TAG = "Login";
+    private String TAG = this.getClass().getSimpleName();
     private AccountManager mAccountManager;
     private String mAuthTokenType;
     private String accountName;
@@ -159,14 +154,14 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
    }
 
     private void populateAutoComplete() {
-        if (!mayRequestContacts()) {
+        if (!mayRequestPermissions()) {
             return;
         }
 
         getLoaderManager().initLoader(0, null, this);
     }
 
-    private boolean mayRequestContacts() {
+    private boolean mayRequestPermissions() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
         }
@@ -181,7 +176,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
             // To use the Snackbar from the design support library, ensure that the activity extends
             // AppCompatActivity and uses the Theme.AppCompat theme.
         } else {
-            requestPermissions(new String[]{GET_ACCOUNTS, ACCOUNT_MANAGER, READ_SYNC_STATS, WRITE_SYNC_SETTINGS}, REQUEST_GET_ACCOUNTS);
+            requestPermissions(new String[]{GET_ACCOUNTS, ACCOUNT_MANAGER, READ_SYNC_STATS, WRITE_SYNC_SETTINGS}, REQUEST_PERMISSIONS);
         }
         return false;
     }
@@ -192,7 +187,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_GET_ACCOUNTS) {
+        if (requestCode == REQUEST_PERMISSIONS) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 populateAutoComplete();
             }
@@ -263,12 +258,8 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
                 {
                     try {
                         JSONObject jsonOuter = new JSONObject(response.body().string());
-
                         JSONObject jsonInner = new JSONObject(jsonOuter.get("user").toString());
 
-                        Log.d(TAG, jsonInner.getString("name"));
-                        Log.d(TAG, jsonInner.getString("email"));
-                        Log.d(TAG, jsonInner.getString("gender"));
                         app().getSession().createLoginSession(
                                 jsonInner.getString("id"),
                                 jsonInner.getString("name"),
@@ -452,6 +443,21 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
 
     }
 
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+
+        if (app().getSession().isLoggedIn()) {
+            Intent intent = new Intent(LoginActivity.this, UserMainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
+        }
+
+        mayRequestPermissions();
+    }
+
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
@@ -527,6 +533,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
 
                 Intent intent = new Intent(LoginActivity.this,UserMainActivity.class);
                 startActivity(intent);
+                finish();
             } else {
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                 mPasswordView.requestFocus();

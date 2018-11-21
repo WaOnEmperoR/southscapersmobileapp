@@ -31,6 +31,8 @@ public class UserMainActivity extends Activity
      */
     private CharSequence mTitle;
 
+    private TextView txtUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -1,5 +1,6 @@
 package id.co.reich.mockupsouthscape.rest;
 
+import id.co.reich.mockupsouthscape.pojo.EventList;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -17,4 +18,7 @@ public interface ApiInterface {
 
     @GET("user")
     Call<ResponseBody> details(@Header("Accept") String accept, @Header("Authorization") String auth);
+
+    @GET("get_events")
+    Call<EventList> getEvents();
 }
