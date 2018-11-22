@@ -106,51 +106,51 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
-//        mEmailView = findViewById(R.id.email);
-//        populateAutoComplete();
-//
-//        mPasswordView = findViewById(R.id.password);
-//        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-//            @Override
-//            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-//                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-//                    attemptLogin();
-//                    return true;
-//                }
-//                return false;
-//            }
-//        });
+        mEmailView = findViewById(R.id.email);
+        populateAutoComplete();
 
-//        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
-//        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                attemptLogin();
-//            }
-//        });
+        mPasswordView = findViewById(R.id.password);
+        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
+                    attemptLogin();
+                    return true;
+                }
+                return false;
+            }
+        });
 
-//        Button mCheckUserButton = findViewById(R.id.check_account);
-//        mCheckUserButton.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Log.d(TAG, "Enter");
-//                getAuthTokenUser(mEmailView.getText().toString());
-//            }
-//        });
+        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
+        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                attemptLogin();
+            }
+        });
 
-//        mLoginFormView = findViewById(R.id.login_form);
-//        mProgressView = findViewById(R.id.login_progress);
-//
-//        mAccountManager = AccountManager.get(getBaseContext());
+        Button mCheckUserButton = findViewById(R.id.check_account);
+        mCheckUserButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "Enter");
+                getAuthTokenUser(mEmailView.getText().toString());
+            }
+        });
 
-//        // If this is a first time adding, then this will be null
-//        accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);
-//        mAuthTokenType = getIntent().getStringExtra(ARG_AUTH_TYPE);
-//
-//        if (mAuthTokenType == null)
-//            mAuthTokenType = getString(R.string.auth_type);
-//
-//        findAccount(accountName);
+        mLoginFormView = findViewById(R.id.login_form);
+        mProgressView = findViewById(R.id.login_progress);
+
+        mAccountManager = AccountManager.get(getBaseContext());
+
+        // If this is a first time adding, then this will be null
+        accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);
+        mAuthTokenType = getIntent().getStringExtra(ARG_AUTH_TYPE);
+
+        if (mAuthTokenType == null)
+            mAuthTokenType = getString(R.string.auth_type);
+
+        findAccount(accountName);
    }
 
     private void populateAutoComplete() {
@@ -460,10 +460,10 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-            finish();
+//            finish();
         }
 
-        mayRequestPermissions();
+//        mayRequestPermissions();
     }
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
