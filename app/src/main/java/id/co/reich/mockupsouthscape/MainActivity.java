@@ -2,9 +2,11 @@ package id.co.reich.mockupsouthscape;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -23,9 +25,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+import java.util.HashMap;
 
-    GridView androidGridView;
+import id.co.reich.mockupsouthscape.fragment.GridFragment;
+import id.co.reich.mockupsouthscape.session.Utils;
+
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, GridFragment.OnFragmentInteractionListener {
+
+//    GridView androidGridView;
     FrameLayout mContentFrame;
     Fragment fragment = null;
 
@@ -33,19 +40,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return AppController.getInstance();
     }
 
-    Integer[] imageIDs = {
-            R.drawable.ic_icons8_home,
-            R.drawable.ic_if_money_322468,
-            R.drawable.ic_if_store_326704,
-            R.drawable.ic_if_calendar_115762
-    };
-
-    String[] imageNames = {
-            "Rumah",
-            "Keuangan",
-            "Layanan",
-            "Agenda"
-    };
+//    Integer[] imageIDs = {
+//            R.drawable.ic_icons8_home,
+//            R.drawable.ic_if_money_322468,
+//            R.drawable.ic_if_store_326704,
+//            R.drawable.ic_if_calendar_115762
+//    };
+//
+//    String[] imageNames = {
+//            "Rumah",
+//            "Keuangan",
+//            "Layanan",
+//            "Agenda"
+//    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +73,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         mContentFrame = findViewById(R.id.nav_contentframe);
+
+        View hView =  navigationView.getHeaderView(0);
+        TextView nav_user = hView.findViewById(R.id.txtView_username);
+
+        HashMap hm = app().getSession().getUserDetails();
+        String nama = (String) hm.get(Utils.KEY_USERNAME);
+        nav_user.setText(nama);
+
+        mContentFrame = findViewById(R.id.nav_contentframe);
+        setFragment("");
 
 //        androidGridView = findViewById(R.id.gridview_android_example);
 //        androidGridView.setAdapter(new ImageAdapterGridView(this));
@@ -102,17 +119,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
         // Handle navigation view item clicks here.
         int id = menuItem.getItemId();
+        String myTag = "";
 
         switch (id)
         {
             case R.id.nav_home :
                 app().toast("Home Selected");
+                fragment = new GridFragment();
+                myTag = "HOME";
+                setFragment(myTag);
                 break;
             case R.id.nav_settings:
                 app().toast("Settings Selected");
+//                myTag = "SETTINGS";
                 break;
             case R.id.nav_logout:
                 app().toast("Logout Selected");
+//                myTag = "LOGOUT";
+
+                app().getSession().logoutUser();
+                this.finish();
                 break;
             default:
                 break;
@@ -123,44 +149,63 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 
+    @Override
+    public void onGridFragmentInteraction(Uri uri) {
 
-    public class ImageAdapterGridView extends BaseAdapter {
-        private Context mContext;
-
-        public ImageAdapterGridView(Context c) {
-            mContext = c;
-        }
-
-        public int getCount() {
-            return imageIDs.length;
-        }
-
-        public Object getItem(int position) {
-            return null;
-        }
-
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View gridViewAndroid;
-
-            LayoutInflater inflater = (LayoutInflater) mContext
-                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-            if (convertView == null) {
-                gridViewAndroid = inflater.inflate(R.layout.gridview_single_item, null);
-                TextView textViewAndroid = gridViewAndroid.findViewById(R.id.android_gridview_text);
-                ImageView imageViewAndroid = gridViewAndroid.findViewById(R.id.android_gridview_image);
-                textViewAndroid.setText(imageNames[position]);
-                imageViewAndroid.setImageResource(imageIDs[position]);
-
-            } else {
-                gridViewAndroid = convertView;
-            }
-            return gridViewAndroid;
-        }
     }
+
+    public void setFragment(String fragment_TAG) {
+
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        if (fragment == null)
+        {
+            ft.replace(R.id.nav_contentframe, new GridFragment());
+        }
+        else
+        {
+            ft.replace(R.id.nav_contentframe, fragment, fragment_TAG);
+        }
+
+        ft.commit();
+    }
+//
+//    public class ImageAdapterGridView extends BaseAdapter {
+//        private Context mContext;
+//
+//        public ImageAdapterGridView(Context c) {
+//            mContext = c;
+//        }
+//
+//        public int getCount() {
+//            return imageIDs.length;
+//        }
+//
+//        public Object getItem(int position) {
+//            return null;
+//        }
+//
+//        public long getItemId(int position) {
+//            return 0;
+//        }
+//
+//        @Override
+//        public View getView(int position, View convertView, ViewGroup parent) {
+//            View gridViewAndroid;
+//
+//            LayoutInflater inflater = (LayoutInflater) mContext
+//                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//
+//            if (convertView == null) {
+//                gridViewAndroid = inflater.inflate(R.layout.gridview_single_item, null);
+//                TextView textViewAndroid = gridViewAndroid.findViewById(R.id.android_gridview_text);
+//                ImageView imageViewAndroid = gridViewAndroid.findViewById(R.id.android_gridview_image);
+//                textViewAndroid.setText(imageNames[position]);
+//                imageViewAndroid.setImageResource(imageIDs[position]);
+//
+//            } else {
+//                gridViewAndroid = convertView;
+//            }
+//            return gridViewAndroid;
+//        }
+//    }
 }

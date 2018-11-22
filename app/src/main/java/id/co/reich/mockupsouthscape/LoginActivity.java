@@ -106,51 +106,51 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         // Set up the login form.
-        mEmailView = findViewById(R.id.email);
-        populateAutoComplete();
+//        mEmailView = findViewById(R.id.email);
+//        populateAutoComplete();
+//
+//        mPasswordView = findViewById(R.id.password);
+//        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+//            @Override
+//            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
+//                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
+//                    attemptLogin();
+//                    return true;
+//                }
+//                return false;
+//            }
+//        });
 
-        mPasswordView = findViewById(R.id.password);
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == EditorInfo.IME_ACTION_DONE || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
+//        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
+//        mEmailSignInButton.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                attemptLogin();
+//            }
+//        });
 
-        Button mEmailSignInButton = findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
+//        Button mCheckUserButton = findViewById(R.id.check_account);
+//        mCheckUserButton.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Log.d(TAG, "Enter");
+//                getAuthTokenUser(mEmailView.getText().toString());
+//            }
+//        });
 
-        Button mCheckUserButton = findViewById(R.id.check_account);
-        mCheckUserButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "Enter");
-                getAuthTokenUser(mEmailView.getText().toString());
-            }
-        });
+//        mLoginFormView = findViewById(R.id.login_form);
+//        mProgressView = findViewById(R.id.login_progress);
+//
+//        mAccountManager = AccountManager.get(getBaseContext());
 
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
-
-        mAccountManager = AccountManager.get(getBaseContext());
-
-        // If this is a first time adding, then this will be null
-        accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);
-        mAuthTokenType = getIntent().getStringExtra(ARG_AUTH_TYPE);
-
-        if (mAuthTokenType == null)
-            mAuthTokenType = getString(R.string.auth_type);
-
-        findAccount(accountName);
+//        // If this is a first time adding, then this will be null
+//        accountName = getIntent().getStringExtra(ARG_ACCOUNT_NAME);
+//        mAuthTokenType = getIntent().getStringExtra(ARG_AUTH_TYPE);
+//
+//        if (mAuthTokenType == null)
+//            mAuthTokenType = getString(R.string.auth_type);
+//
+//        findAccount(accountName);
    }
 
     private void populateAutoComplete() {
@@ -245,6 +245,14 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
             mAuthTask = new UserLoginTask(email, password);
             mAuthTask.execute((Void) null);
         }
+    }
+
+    @Override
+    public void onBackPressed()
+    {
+        super.onBackPressed();
+        app().toast("Keluar");
+        finish();
     }
 
     private void fillSessionData(String authToken)
