@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import id.co.reich.mockupsouthscape.AppController;
+import id.co.reich.mockupsouthscape.EventTabbedActivity;
 import id.co.reich.mockupsouthscape.PlaceholderActivity;
 import id.co.reich.mockupsouthscape.R;
 
@@ -105,7 +106,7 @@ public class GridFragment extends Fragment {
 
                 switch(i){
                     case 3 :
-                        Intent intent = new Intent(getActivity(),PlaceholderActivity.class);
+                        Intent intent = new Intent(getActivity(),EventTabbedActivity.class);
                         startActivity(intent);
                         break;
                     default:

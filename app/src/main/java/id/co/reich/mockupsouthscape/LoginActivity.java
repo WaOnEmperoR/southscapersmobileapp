@@ -251,7 +251,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
     public void onBackPressed()
     {
         super.onBackPressed();
-        app().toast("Keluar");
+        app().toast("Exit App");
         finish();
     }
 

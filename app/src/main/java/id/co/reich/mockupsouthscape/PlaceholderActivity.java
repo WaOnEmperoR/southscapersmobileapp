@@ -9,7 +9,7 @@ import com.mindorks.placeholderview.InfinitePlaceHolderView;
 import java.util.List;
 
 import id.co.reich.mockupsouthscape.model.InfiniteFeedInfo;
-import id.co.reich.mockupsouthscape.util.Utils;
+import id.co.reich.mockupsouthscape.infinity.Utils;
 import id.co.reich.mockupsouthscape.view.ItemView;
 import id.co.reich.mockupsouthscape.view.LoadMoreView;
 
