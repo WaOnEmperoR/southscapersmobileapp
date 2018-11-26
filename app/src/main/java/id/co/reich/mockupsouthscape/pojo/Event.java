@@ -1,26 +1,44 @@
 package id.co.reich.mockupsouthscape.pojo;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 public class Event{
 
     @SerializedName("event_id")
+    @Expose
     private int eventID;
+
     @SerializedName("event_name")
+    @Expose
     private String eventName;
+
     @SerializedName("event_place")
+    @Expose
     private String eventPlace;
+
     @SerializedName("event_start")
+    @Expose
     private String eventStart;
+
     @SerializedName("event_finish")
+    @Expose
     private String eventFinish;
+
     @SerializedName("event_type_id")
+    @Expose
     private int eventTypeID;
+
     @SerializedName("user_id")
+    @Expose
     private int userID;
+
     @SerializedName("type_event_name")
+    @Expose
     private String type_event_name;
+
     @SerializedName("name")
+    @Expose
     private String name;
 
     public Event(int eventID, String eventName, String eventPlace, String eventStart, String eventFinish, int eventTypeID, int userID, String type_event_name, String name)
