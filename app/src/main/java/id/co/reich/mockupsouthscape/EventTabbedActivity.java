@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import id.co.reich.mockupsouthscape.fragment.EventAheadFragment;
+
 public class EventTabbedActivity extends Activity {
 
     /**
@@ -101,9 +103,20 @@ public class EventTabbedActivity extends Activity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_event_tabbed, container, false);
-            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            int tab_number = getArguments().getInt(ARG_SECTION_NUMBER);
+            View rootView = null;
+
+            if (tab_number==-1)
+            {
+                rootView = inflater.inflate(R.layout.fragment_event_ahead, container, false);
+            }
+            else
+            {
+                rootView = inflater.inflate(R.layout.fragment_event_tabbed, container, false);
+                TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+                textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+            }
+
             return rootView;
         }
     }
@@ -122,6 +135,11 @@ public class EventTabbedActivity extends Activity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
+            if (position == 0)
+            {
+                return EventAheadFragment.newInstance();
+            }
+
             return PlaceholderFragment.newInstance(position + 1);
         }
 
