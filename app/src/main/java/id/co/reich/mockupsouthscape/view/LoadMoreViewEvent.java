@@ -17,6 +17,8 @@ import id.co.reich.mockupsouthscape.pojo.EventList;
 import id.co.reich.mockupsouthscape.rest.ApiClient;
 import id.co.reich.mockupsouthscape.rest.ApiInterface;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 @Layout(R.layout.load_more_view)
@@ -57,30 +59,35 @@ public class LoadMoreViewEvent {
                     Log.d("DEBUG", "count " + count);
 
                     mApiService = ApiClient.getClient().create(ApiInterface.class);
-                    try {
-                        Response<EventList> response = mApiService.getEvents(count-1, LOAD_VIEW_SET_COUNT).execute();
-                        if (response.isSuccessful())
-                        {
-                            for (int i=0; i<response.body().getEventArrayList().size(); i++)
+
+                    Call<EventList> call = mApiService.getEvents(count, LoadMoreViewEvent.LOAD_VIEW_SET_COUNT);
+                    call.enqueue(new Callback<EventList>() {
+                        @Override
+                        public void onResponse(Call<EventList> call, Response<EventList> response) {
+                            if (response.isSuccessful())
                             {
-                                mLoadMoreView.addView(new ItemViewEvent(mLoadMoreView.getContext(), response.body().getEventArrayList().get(i)));
+                                Log.d(this.getClass().getSimpleName(), "Response Successful");
+
+                                if (response.body().getEventArrayList().size()==0)
+                                {
+                                    mLoadMoreView.noMoreToLoad();
+                                }
+
+                                for (int i=0; i<response.body().getEventArrayList().size(); i++)
+                                {
+                                    mLoadMoreView.addView(new ItemViewEvent(mLoadMoreView.getContext(), response.body().getEventArrayList().get(i)));
+                                }
+                                mLoadMoreView.loadingDone();
                             }
                         }
-                    } catch (IOException e) {
-                        Log.e("LoadMore", e.getMessage());
-                    }
 
-//                    for (int i = count - 1;
-//                         i < (count - 1 + LoadMoreView.LOAD_VIEW_SET_COUNT) && mFeedList.size() > i;
-//                         i++) {
-//                        mLoadMoreView.addView(new ItemView(mLoadMoreView.getContext(), mFeedList.get(i)));
-//
-//                        if(i == mFeedList.size() - 1){
-//                            mLoadMoreView.noMoreToLoad();
-//                            break;
-//                        }
-//                    }
-                    mLoadMoreView.loadingDone();
+                        @Override
+                        public void onFailure(Call<EventList> call, Throwable t) {
+                            Log.e(this.getClass().getSimpleName(), t.getMessage());
+                        }
+                    });
+//                    mLoadMoreView.loadingDone();
+
                 }
             });
         }
