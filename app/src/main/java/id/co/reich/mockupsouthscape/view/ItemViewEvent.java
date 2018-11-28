@@ -1,12 +1,17 @@
 package id.co.reich.mockupsouthscape.view;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
 import com.mindorks.placeholderview.annotations.View;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import id.co.reich.mockupsouthscape.R;
 import id.co.reich.mockupsouthscape.model.InfiniteFeedInfo;
@@ -36,9 +41,23 @@ public class ItemViewEvent {
 
     @Resolve
     private void onResolved() {
+        SimpleDateFormat formatter1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat formatter2 = new SimpleDateFormat("dd MMMM yyyy HH:mm");
+
         tv_event_name.setText(mEvent.getEventName());
         tv_event_type.setText(mEvent.getType_event_name());
         tv_event_place.setText(mEvent.getEventPlace());
-        tv_event_time.setText(mEvent.getEventStart() + " - " + mEvent.getEventFinish());
+
+        try {
+            Date date_start=formatter1.parse(mEvent.getEventStart());
+            Date date_finish=formatter1.parse(mEvent.getEventFinish());
+
+            String start_date = formatter2.format(date_start);
+            String finish_date = formatter2.format(date_finish);
+
+            tv_event_time.setText(start_date + " s.d. " + finish_date);
+        } catch (ParseException e) {
+            Log.e("ItemView", e.getMessage());
+        }
     }
 }

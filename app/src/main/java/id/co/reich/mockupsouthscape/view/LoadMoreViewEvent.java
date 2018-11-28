@@ -23,7 +23,7 @@ import retrofit2.Response;
 
 @Layout(R.layout.load_more_view)
 public class LoadMoreViewEvent {
-    public static final int LOAD_VIEW_SET_COUNT = 1;
+    public static final int LOAD_VIEW_SET_COUNT = 3;
 
     private InfinitePlaceHolderView mLoadMoreView;
     private ApiInterface mApiService;
@@ -86,7 +86,6 @@ public class LoadMoreViewEvent {
                             Log.e(this.getClass().getSimpleName(), t.getMessage());
                         }
                     });
-//                    mLoadMoreView.loadingDone();
 
                 }
             });

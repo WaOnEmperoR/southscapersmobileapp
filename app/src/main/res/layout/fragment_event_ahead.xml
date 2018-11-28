@@ -11,11 +11,9 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/contentPlaceholder"
+        android:id="@+id/contentPlaceholderEvent"
         android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:context=".PlaceholderActivity"
-        tools:showIn="@layout/activity_placeholder">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <com.mindorks.placeholderview.InfinitePlaceHolderView
             android:id="@+id/loadMore_Event"
