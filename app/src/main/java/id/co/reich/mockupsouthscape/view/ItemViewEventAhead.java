@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.Resolve;
 import com.mindorks.placeholderview.annotations.View;
@@ -14,11 +13,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import id.co.reich.mockupsouthscape.R;
-import id.co.reich.mockupsouthscape.model.InfiniteFeedInfo;
 import id.co.reich.mockupsouthscape.pojo.Event;
 
-@Layout(R.layout.event_more_item_view)
-public class ItemViewEvent {
+@Layout(R.layout.event_ahead_more_item_view)
+public class ItemViewEventAhead {
     @View(R.id.txt_event_title)
     private TextView tv_event_name;
 
@@ -34,7 +32,7 @@ public class ItemViewEvent {
     private Event mEvent;
     private Context mContext;
 
-    public ItemViewEvent(Context context, Event event) {
+    public ItemViewEventAhead(Context context, Event event) {
         mContext = context;
         mEvent = event;
     }

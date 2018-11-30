@@ -4,43 +4,31 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.mindorks.placeholderview.InfinitePlaceHolderView;
-
 import id.co.reich.mockupsouthscape.R;
-import id.co.reich.mockupsouthscape.pojo.EventList;
-import id.co.reich.mockupsouthscape.rest.ApiClient;
-import id.co.reich.mockupsouthscape.rest.ApiInterface;
-import id.co.reich.mockupsouthscape.view.ItemViewEventAhead;
-import id.co.reich.mockupsouthscape.view.LoadMoreViewEventAhead;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link EventAheadFragment.OnFragmentInteractionListener} interface
+ * {@link PaymentHistoryFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link EventAheadFragment#newInstance} factory method to
+ * Use the {@link PaymentHistoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class EventAheadFragment extends Fragment {
+public class PaymentHistoryFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private InfinitePlaceHolderView mLoadMoreView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    public EventAheadFragment() {
+    public PaymentHistoryFragment() {
         // Required empty public constructor
     }
 
@@ -48,11 +36,11 @@ public class EventAheadFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment EventAheadFragment.
+     * @return A new instance of fragment PaymentHistoryFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static EventAheadFragment newInstance() {
-        EventAheadFragment fragment = new EventAheadFragment();
+    public static PaymentHistoryFragment newInstance() {
+        PaymentHistoryFragment fragment = new PaymentHistoryFragment();
         return fragment;
     }
 
@@ -69,45 +57,14 @@ public class EventAheadFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_event_ahead, container, false);
-        mLoadMoreView = view.findViewById(R.id.loadMore_EventAhead);
-
-        Log.d(this.getClass().getSimpleName(), "onCreateView");
-        SetupView();
+        View view = inflater.inflate(R.layout.fragment_payment_history, container, false);
 
         return view;
     }
 
-    private void SetupView()
-    {
-        Log.d(this.getClass().getSimpleName(), "SetupView");
-
-        final ApiInterface mApiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<EventList> call = mApiService.getEvents(0, LoadMoreViewEventAhead.LOAD_VIEW_SET_COUNT);
-        call.enqueue(new Callback<EventList>() {
-            @Override
-            public void onResponse(Call<EventList> call, Response<EventList> response) {
-                if (response.isSuccessful())
-                {
-                    Log.d(this.getClass().getSimpleName(), "Response Successful");
-                    for (int i=0; i<response.body().getEventArrayList().size(); i++)
-                    {
-                        mLoadMoreView.addView(new ItemViewEventAhead(getActivity(), response.body().getEventArrayList().get(i)));
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<EventList> call, Throwable t) {
-                Log.e(this.getClass().getSimpleName(), t.getMessage());
-            }
-        });
-
-        mLoadMoreView.setLoadMoreResolver(new LoadMoreViewEventAhead(mLoadMoreView));
-    }
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
+
     }
 
     @Override
