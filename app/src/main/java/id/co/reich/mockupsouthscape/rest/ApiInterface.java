@@ -1,6 +1,7 @@
 package id.co.reich.mockupsouthscape.rest;
 
 import id.co.reich.mockupsouthscape.pojo.EventList;
+import id.co.reich.mockupsouthscape.pojo.PaymentList;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -18,8 +19,16 @@ public interface ApiInterface {
                              @Field("password") String password);
 
     @GET("user")
-    Call<ResponseBody> details(@Header("Accept") String accept, @Header("Authorization") String auth);
+    Call<ResponseBody> details(@Header("Accept") String accept,
+                               @Header("Authorization") String auth);
 
     @GET("get_events/{begin}/{end}")
-    Call<EventList> getEvents(@Path("begin") int begin, @Path("end") int end);
+    Call<EventList> getEvents(@Path("begin") int begin,
+                              @Path("end") int end);
+
+    @GET("payments/{begin}/{end}")
+    Call<PaymentList> getPayments(@Header("Accept") String accept,
+                                  @Header("Authorization") String auth,
+                                  @Path("begin") int begin,
+                                  @Path("end") int end);
 }

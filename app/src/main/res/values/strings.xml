@@ -46,4 +46,12 @@
     <string name="title_event_type">Event Type</string>
     <string name="title_event_time">Event Time</string>
     <string name="title_event_place">Event Place</string>
+
+    <!-- Strings related to payments -->
+    <string name="title_payment_session">Payment Session</string>
+    <string name="title_payment_type">Payment Type</string>
+    <string name="title_payment_status">Verification Status</string>
+    <string name="title_payment_submit_date">Submit Date</string>
+    <string name="title_payment_verified_date">Verified Date</string>
+    <string name="title_payment_rejection_cause">Rejection Cause</string>
 </resources>

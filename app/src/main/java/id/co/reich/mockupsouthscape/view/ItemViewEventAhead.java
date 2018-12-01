@@ -39,19 +39,19 @@ public class ItemViewEventAhead {
 
     @Resolve
     private void onResolved() {
-        SimpleDateFormat formatter1=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat formatter2 = new SimpleDateFormat("dd MMMM yyyy HH:mm");
+        SimpleDateFormat preFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat postFormatter = new SimpleDateFormat("dd MMMM yyyy HH:mm");
 
         tv_event_name.setText(mEvent.getEventName());
         tv_event_type.setText(mEvent.getType_event_name());
         tv_event_place.setText(mEvent.getEventPlace());
 
         try {
-            Date date_start=formatter1.parse(mEvent.getEventStart());
-            Date date_finish=formatter1.parse(mEvent.getEventFinish());
+            Date date_start=preFormatter.parse(mEvent.getEventStart());
+            Date date_finish=preFormatter.parse(mEvent.getEventFinish());
 
-            String start_date = formatter2.format(date_start);
-            String finish_date = formatter2.format(date_finish);
+            String start_date = postFormatter.format(date_start);
+            String finish_date = postFormatter.format(date_finish);
 
             tv_event_time.setText(start_date + " s.d. " + finish_date);
         } catch (ParseException e) {
