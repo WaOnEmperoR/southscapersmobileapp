@@ -42,6 +42,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import id.co.reich.mockupsouthscape.async.LoginTask;
+import id.co.reich.mockupsouthscape.async.OnTaskCompleted;
 import id.co.reich.mockupsouthscape.rest.ApiClient;
 import id.co.reich.mockupsouthscape.rest.ApiInterface;
 import okhttp3.ResponseBody;
@@ -57,7 +59,7 @@ import static android.Manifest.permission.WRITE_SYNC_SETTINGS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AccountAuthenticatorActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity extends AccountAuthenticatorActivity implements LoaderCallbacks<Cursor>, OnTaskCompleted {
 
     /**
      * Id to identity GET_ACCOUNTS permission request.
@@ -87,14 +89,11 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
     private AccountManager mAccountManager;
     private String mAuthTokenType;
     private String accountName;
+    private LoginTask loginTask;
 
     public final static String ARG_ACCOUNT_TYPE = "ACCOUNT_TYPE";
     public final static String ARG_AUTH_TYPE = "AUTH_TYPE";
     public final static String ARG_ACCOUNT_NAME = "ACCOUNT_NAME";
-    public final static String ARG_IS_ADDING_NEW_ACCOUNT = "IS_ADDING_ACCOUNT";
-
-    public static final String KEY_ERROR_MESSAGE = "ERR_MSG";
-
     public final static String PARAM_USER_PASS = "USER_PASS";
 
     private AppController app() {
@@ -242,8 +241,11 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            loginTask = new LoginTask(this, email, password);
+            loginTask.execute();
+
+//            mAuthTask = new UserLoginTask(email, password);
+//            mAuthTask.execute((Void) null);
         }
     }
 
@@ -347,7 +349,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
                 @Override
                 public void run() {
                     try {
-                        String token = "";
+                        String token;
                         token = mAccountManager.blockingGetAuthToken(acc, mAuthTokenType, true);
                         Log.d(TAG, "UserToken >" + token);
                     } catch (OperationCanceledException e) {
@@ -460,10 +462,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
-//            finish();
         }
-
-//        mayRequestPermissions();
     }
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
@@ -473,6 +472,26 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onTaskCompleted(String result) {
+        loginTask = null;
+        showProgress(false);
+
+        if (!result.equals("FAILED")) {
+            Log.d(TAG, "Successfully Login, Username and Password are correct");
+
+            userSignIn(result, mEmailView.getText().toString(), mPasswordView.getText().toString());
+            fillSessionData(result);
+
+            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+            startActivity(intent);
+            finish();
+        } else {
+            mPasswordView.setError(getString(R.string.error_incorrect_password));
+            mPasswordView.requestFocus();
+        }
     }
 
     private interface ProfileQuery {
