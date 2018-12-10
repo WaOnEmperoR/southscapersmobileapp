@@ -42,10 +42,19 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import id.co.reich.mockupsouthscape.async.LoginTask;
 import id.co.reich.mockupsouthscape.async.OnTaskCompleted;
 import id.co.reich.mockupsouthscape.rest.ApiClient;
 import id.co.reich.mockupsouthscape.rest.ApiInterface;
+import io.reactivex.Observable;
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -96,6 +105,9 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
     public final static String ARG_ACCOUNT_NAME = "ACCOUNT_NAME";
     public final static String PARAM_USER_PASS = "USER_PASS";
 
+    private CompositeDisposable disposable = new CompositeDisposable();
+    private Unbinder unbinder;
+
     private AppController app() {
         return AppController.getInstance();
     }
@@ -107,6 +119,8 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
         // Set up the login form.
         mEmailView = findViewById(R.id.email);
         populateAutoComplete();
+
+        unbinder = ButterKnife.bind(this);
 
         mPasswordView = findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -150,6 +164,8 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
             mAuthTokenType = getString(R.string.auth_type);
 
         findAccount(accountName);
+
+
    }
 
     private void populateAutoComplete() {
@@ -240,9 +256,42 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
         } else {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
-            showProgress(true);
-            loginTask = new LoginTask(this, email, password);
-            loginTask.execute();
+//            showProgress(true);
+//            loginTask = new LoginTask(this, email, password);
+//            loginTask.execute();
+
+            Observable<ResponseBody> loginObservable = RXLoginTask(email, password);
+
+            disposable.add(
+                loginObservable
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableObserver<ResponseBody>() {
+                            @Override
+                            public void onNext(ResponseBody responseBody) {
+                                try {
+                                    JSONObject jsonRESULTS = new JSONObject(responseBody.string());
+                                    String token = jsonRESULTS.get("token").toString();
+
+                                    Log.d(TAG, "Token = " + token);
+                                } catch (IOException e) {
+                                    Log.e(TAG, e.getMessage());
+                                } catch (JSONException e) {
+                                    Log.e(TAG, e.getMessage());
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e(TAG, e.getMessage());
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                Log.d(TAG, "onComplete from rxjava");
+                            }
+                    })
+            );
 
 //            mAuthTask = new UserLoginTask(email, password);
 //            mAuthTask.execute((Void) null);
@@ -255,6 +304,13 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
         super.onBackPressed();
         app().toast("Exit App");
         finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        disposable.dispose();
+        unbinder.unbind();
     }
 
     private void fillSessionData(String authToken)
@@ -502,6 +558,14 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
 
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
+    }
+
+    private Observable<ResponseBody> RXLoginTask(String mEmail, String mPassword)
+    {
+        mApiService = ApiClient.getClient().create(ApiInterface.class);
+        return mApiService.RxLogin(mEmail, mPassword)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     /**
