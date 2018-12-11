@@ -2,6 +2,7 @@ package id.co.reich.mockupsouthscape.rest;
 
 import id.co.reich.mockupsouthscape.pojo.EventList;
 import id.co.reich.mockupsouthscape.pojo.PaymentList;
+import id.co.reich.mockupsouthscape.pojo.UserDetail;
 import okhttp3.ResponseBody;
 import io.reactivex.Observable;
 import retrofit2.Call;
@@ -37,4 +38,8 @@ public interface ApiInterface {
     @POST("login")
     Observable<ResponseBody> RxLogin(@Field("email") String email,
                                     @Field("password") String password);
+
+    @GET("user")
+    Observable<UserDetail> RxUserDetails(@Header("Accept") String accept,
+                                        @Header("Authorization") String auth);
 }

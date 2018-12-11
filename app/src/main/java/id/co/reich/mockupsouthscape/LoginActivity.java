@@ -46,13 +46,16 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import id.co.reich.mockupsouthscape.async.LoginTask;
 import id.co.reich.mockupsouthscape.async.OnTaskCompleted;
+import id.co.reich.mockupsouthscape.pojo.UserDetail;
 import id.co.reich.mockupsouthscape.rest.ApiClient;
 import id.co.reich.mockupsouthscape.rest.ApiInterface;
 import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
@@ -260,37 +263,38 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
 //            loginTask = new LoginTask(this, email, password);
 //            loginTask.execute();
 
-            Observable<ResponseBody> loginObservable = RXLoginTask(email, password);
+            showProgress(true);
+
+            Observable<UserDetail> loginObservable = RXLoginTask(email, password);
 
             disposable.add(
                 loginObservable
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableObserver<ResponseBody>() {
+                        .subscribeWith(new DisposableObserver<UserDetail>() {
                             @Override
-                            public void onNext(ResponseBody responseBody) {
-                                try {
-                                    JSONObject jsonRESULTS = new JSONObject(responseBody.string());
-                                    String token = jsonRESULTS.get("token").toString();
-
-                                    Log.d(TAG, "Token = " + token);
-                                } catch (IOException e) {
-                                    Log.e(TAG, e.getMessage());
-                                } catch (JSONException e) {
-                                    Log.e(TAG, e.getMessage());
-                                }
+                            public void onNext(UserDetail userDetail) {
+                                Log.d(TAG, userDetail.getEmail());
+                                Log.d(TAG, userDetail.getName());
+                                Log.d(TAG, userDetail.getAddress());
+                                Log.d(TAG, userDetail.getBirth_date());
+                                Log.d(TAG, userDetail.getGender());
+                                Log.d(TAG, String.valueOf(userDetail.getUserid()));
                             }
 
                             @Override
                             public void onError(Throwable e) {
                                 Log.e(TAG, e.getMessage());
+                                showProgress(false);
                             }
 
                             @Override
                             public void onComplete() {
                                 Log.d(TAG, "onComplete from rxjava");
+                                showProgress(false);
                             }
                     })
+
             );
 
 //            mAuthTask = new UserLoginTask(email, password);
@@ -560,10 +564,32 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
         int IS_PRIMARY = 1;
     }
 
-    private Observable<ResponseBody> RXLoginTask(String mEmail, String mPassword)
+    private Observable<UserDetail> RXLoginTask(String mEmail, String mPassword)
     {
         mApiService = ApiClient.getClient().create(ApiInterface.class);
         return mApiService.RxLogin(mEmail, mPassword)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .map(new Function<ResponseBody, String>() {
+                    @Override
+                    public String apply(ResponseBody responseBody) throws Exception {
+                        JSONObject jsonRESULTS = new JSONObject(responseBody.string());
+                        Log.d(TAG, "token from RxJava = " + jsonRESULTS.get("token").toString());
+                        return jsonRESULTS.get("token").toString();
+                    }
+                })
+                .flatMap(new Function<String, Observable<UserDetail>>() {
+                    @Override
+                    public Observable<UserDetail> apply(String s) throws Exception {
+                        return RXUserDetailTask(s);
+                    }
+                });
+    }
+
+    private Observable<UserDetail> RXUserDetailTask(String authToken)
+    {
+        mApiService = ApiClient.getClient().create(ApiInterface.class);
+        return mApiService.RxUserDetails("application/json", "Bearer " + authToken)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
