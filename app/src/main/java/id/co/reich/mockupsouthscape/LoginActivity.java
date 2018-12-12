@@ -71,7 +71,7 @@ import static android.Manifest.permission.WRITE_SYNC_SETTINGS;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AccountAuthenticatorActivity implements LoaderCallbacks<Cursor>, OnTaskCompleted {
+public class LoginActivity extends AccountAuthenticatorActivity implements LoaderCallbacks<Cursor> {
 
     /**
      * Id to identity GET_ACCOUNTS permission request.
@@ -86,10 +86,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
     private static final String[] DUMMY_CREDENTIALS = new String[]{
             "foo@example.com:hello", "bar@example.com:world"
     };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
-    private UserLoginTask mAuthTask = null;
 
     // UI references.
     private AutoCompleteTextView mEmailView;
@@ -167,8 +163,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
             mAuthTokenType = getString(R.string.auth_type);
 
         findAccount(accountName);
-
-
    }
 
     private void populateAutoComplete() {
@@ -219,10 +213,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
-
         // Reset errors.
         mEmailView.setError(null);
         mPasswordView.setError(null);
@@ -257,12 +247,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
             // form field with an error.
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
-//            showProgress(true);
-//            loginTask = new LoginTask(this, email, password);
-//            loginTask.execute();
-
             showProgress(true);
 
             Observable<UserDetail> loginObservable = RXLoginTask(email, password);
@@ -274,31 +258,47 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
                         .subscribeWith(new DisposableObserver<UserDetail>() {
                             @Override
                             public void onNext(UserDetail userDetail) {
+                                showProgress(false);
+
                                 Log.d(TAG, userDetail.getEmail());
                                 Log.d(TAG, userDetail.getName());
                                 Log.d(TAG, userDetail.getAddress());
                                 Log.d(TAG, userDetail.getBirth_date());
                                 Log.d(TAG, userDetail.getGender());
                                 Log.d(TAG, String.valueOf(userDetail.getUserid()));
+
+                                app().getSession().createLoginSession(
+                                        String.valueOf(userDetail.getUserid()),
+                                        String.valueOf(userDetail.getName()),
+                                        String.valueOf(userDetail.getEmail()),
+                                        String.valueOf(userDetail.getGender()),
+                                        String.valueOf(userDetail.getBirth_date()),
+                                        String.valueOf(userDetail.getAddress()),
+                                        String.valueOf(userDetail.getImg_avatar())
+                                );
+
+                                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                                startActivity(intent);
+                                finish();
                             }
 
                             @Override
                             public void onError(Throwable e) {
-                                Log.e(TAG, e.getMessage());
                                 showProgress(false);
+
+                                mPasswordView.setError(getString(R.string.error_incorrect_password));
+                                mPasswordView.requestFocus();
+
+                                Log.e(TAG, e.getMessage() + "from rxjava");
                             }
 
                             @Override
                             public void onComplete() {
-                                Log.d(TAG, "onComplete from rxjava");
                                 showProgress(false);
+                                Log.d(TAG, "onComplete from rxjava");
                             }
                     })
-
             );
-
-//            mAuthTask = new UserLoginTask(email, password);
-//            mAuthTask.execute((Void) null);
         }
     }
 
@@ -306,7 +306,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
     public void onBackPressed()
     {
         super.onBackPressed();
-        app().toast("Exit App");
         finish();
     }
 
@@ -315,43 +314,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
         super.onDestroy();
         disposable.dispose();
         unbinder.unbind();
-    }
-
-    private void fillSessionData(String authToken)
-    {
-        mApiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<ResponseBody> call = mApiService.details("application/json", "Bearer " + authToken);
-        call.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful())
-                {
-                    try {
-                        JSONObject jsonOuter = new JSONObject(response.body().string());
-                        JSONObject jsonInner = new JSONObject(jsonOuter.get("user").toString());
-
-                        app().getSession().createLoginSession(
-                                jsonInner.getString("id"),
-                                jsonInner.getString("name"),
-                                jsonInner.getString("email"),
-                                jsonInner.getString("gender"),
-                                jsonInner.getString("birth_date"),
-                                jsonInner.getString("address"),
-                                jsonInner.getString("img_avatar")
-                        );
-                    } catch (IOException e) {
-                        Log.e(TAG, e.getMessage());
-                    } catch (JSONException e) {
-                        Log.e(TAG, e.getMessage());
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e(TAG, t.getMessage());
-            }
-        });
     }
 
     private void userSignIn(String authToken, String accountName, String password)
@@ -534,26 +496,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
         mEmailView.setAdapter(adapter);
     }
 
-    @Override
-    public void onTaskCompleted(String result) {
-        loginTask = null;
-        showProgress(false);
-
-        if (!result.equals("FAILED")) {
-            Log.d(TAG, "Successfully Login, Username and Password are correct");
-
-            userSignIn(result, mEmailView.getText().toString(), mPasswordView.getText().toString());
-            fillSessionData(result);
-
-            Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-            startActivity(intent);
-            finish();
-        } else {
-            mPasswordView.setError(getString(R.string.error_incorrect_password));
-            mPasswordView.requestFocus();
-        }
-    }
-
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -564,7 +506,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
         int IS_PRIMARY = 1;
     }
 
-    private Observable<UserDetail> RXLoginTask(String mEmail, String mPassword)
+    private Observable<UserDetail> RXLoginTask(final String mEmail, final String mPassword)
     {
         mApiService = ApiClient.getClient().create(ApiInterface.class);
         return mApiService.RxLogin(mEmail, mPassword)
@@ -574,94 +516,22 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
                     @Override
                     public String apply(ResponseBody responseBody) throws Exception {
                         JSONObject jsonRESULTS = new JSONObject(responseBody.string());
-                        Log.d(TAG, "token from RxJava = " + jsonRESULTS.get("token").toString());
+                        String token = jsonRESULTS.get("token").toString();
+                        Log.d(TAG, "token from RxJava = " + token);
+                        userSignIn(token, mEmail, mPassword);
+
                         return jsonRESULTS.get("token").toString();
                     }
                 })
                 .flatMap(new Function<String, Observable<UserDetail>>() {
                     @Override
-                    public Observable<UserDetail> apply(String s) throws Exception {
-                        return RXUserDetailTask(s);
+                    public Observable<UserDetail> apply(String authToken) throws Exception {
+                        return mApiService.RxUserDetails("application/json", "Bearer " + authToken)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread());
                     }
                 });
     }
 
-    private Observable<UserDetail> RXUserDetailTask(String authToken)
-    {
-        mApiService = ApiClient.getClient().create(ApiInterface.class);
-        return mApiService.RxUserDetails("application/json", "Bearer " + authToken)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread());
-    }
-
-    /**
-     * Represents an asynchronous login/registration task used to authenticate
-     * the user.
-     */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
-
-        private final String mEmail;
-        private final String mPassword;
-        private String token;
-
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            token = null;
-
-            // synchronous Retrofit API calling inside asynchronous block
-            mApiService = ApiClient.getClient().create(ApiInterface.class);
-            try {
-                Response<ResponseBody> response = mApiService.login(mEmail, mPassword).execute();
-                if (response.isSuccessful())
-                {
-                    try {
-                        JSONObject jsonRESULTS = new JSONObject(response.body().string());
-                        token = jsonRESULTS.get("token").toString();
-
-                        Log.d(TAG, token);
-                    } catch (JSONException e) {
-                        Log.e(TAG, e.getMessage());
-                    } catch (IOException e) {
-                        Log.e(TAG, e.getMessage());
-                    }
-                }
-            } catch (IOException e) {
-                Log.e(TAG, e.getMessage());
-            }
-
-            return token!=null;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(false);
-
-            if (success) {
-                Log.d(TAG, "Successfully Login, Username and Password are correct");
-
-                userSignIn(token, mEmail, mPassword);
-                fillSessionData(token);
-
-                Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
-            }
-        }
-
-        @Override
-        protected void onCancelled() {
-            mAuthTask = null;
-            showProgress(false);
-        }
-    }
 }
 
