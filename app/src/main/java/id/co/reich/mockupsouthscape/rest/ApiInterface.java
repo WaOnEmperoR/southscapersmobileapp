@@ -37,9 +37,13 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST("login")
     Observable<ResponseBody> RxLogin(@Field("email") String email,
-                                    @Field("password") String password);
+                                     @Field("password") String password);
 
     @GET("user")
     Observable<UserDetail> RxUserDetails(@Header("Accept") String accept,
-                                        @Header("Authorization") String auth);
+                                         @Header("Authorization") String auth);
+
+    @GET("get_events/{begin}/{end}")
+    Observable<EventList> RxGetEvents(@Path("begin") int begin,
+                                      @Path("end") int end);
 }

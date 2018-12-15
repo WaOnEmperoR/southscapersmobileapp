@@ -11,12 +11,23 @@ import android.view.ViewGroup;
 
 import com.mindorks.placeholderview.InfinitePlaceHolderView;
 
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import id.co.reich.mockupsouthscape.R;
+import id.co.reich.mockupsouthscape.pojo.Event;
 import id.co.reich.mockupsouthscape.pojo.EventList;
+import id.co.reich.mockupsouthscape.pojo.UserDetail;
 import id.co.reich.mockupsouthscape.rest.ApiClient;
 import id.co.reich.mockupsouthscape.rest.ApiInterface;
 import id.co.reich.mockupsouthscape.view.ItemViewEventAhead;
 import id.co.reich.mockupsouthscape.view.LoadMoreViewEventAhead;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -35,6 +46,9 @@ public class EventAheadFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private InfinitePlaceHolderView mLoadMoreView;
+
+    private CompositeDisposable disposable = new CompositeDisposable();
+    private Unbinder unbinder;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -72,6 +86,8 @@ public class EventAheadFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_event_ahead, container, false);
         mLoadMoreView = view.findViewById(R.id.loadMore_EventAhead);
 
+        unbinder = ButterKnife.bind(this.getActivity());
+
         Log.d(this.getClass().getSimpleName(), "onCreateView");
         SetupView();
 
@@ -82,28 +98,37 @@ public class EventAheadFragment extends Fragment {
     {
         Log.d(this.getClass().getSimpleName(), "SetupView");
 
-        final ApiInterface mApiService = ApiClient.getClient().create(ApiInterface.class);
-        Call<EventList> call = mApiService.getEvents(0, LoadMoreViewEventAhead.LOAD_VIEW_SET_COUNT);
-        call.enqueue(new Callback<EventList>() {
-            @Override
-            public void onResponse(Call<EventList> call, Response<EventList> response) {
-                if (response.isSuccessful())
-                {
-                    Log.d(this.getClass().getSimpleName(), "Response Successful");
-                    for (int i=0; i<response.body().getEventArrayList().size(); i++)
-                    {
-                        mLoadMoreView.addView(new ItemViewEventAhead(getActivity(), response.body().getEventArrayList().get(i)));
-                    }
-                }
-            }
+        Observable<EventList> eventsAheadObservable = getEventAheadList();
 
-            @Override
-            public void onFailure(Call<EventList> call, Throwable t) {
-                Log.e(this.getClass().getSimpleName(), t.getMessage());
-            }
-        });
+        disposable.add(
+            eventsAheadObservable
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableObserver<EventList>() {
+                        @Override
+                        public void onNext(EventList eventList) {
+                            Log.d(this.getClass().getSimpleName(), "Response Successful");
+
+                            for (int i=0; i<eventList.getEventArrayList().size(); i++)
+                            {
+                                mLoadMoreView.addView(new ItemViewEventAhead(getActivity(), eventList.getEventArrayList().get(i)));
+                            }
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e(this.getClass().getSimpleName(), e.getMessage());
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            Log.e(this.getClass().getSimpleName(), "onComplete from RXJava");
+                        }
+                    })
+        );
 
         mLoadMoreView.setLoadMoreResolver(new LoadMoreViewEventAhead(mLoadMoreView));
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -133,5 +158,20 @@ public class EventAheadFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        disposable.dispose();
+        unbinder.unbind();
+    }
+
+    private Observable<EventList> getEventAheadList()
+    {
+        final ApiInterface mApiService = ApiClient.getClient().create(ApiInterface.class);
+        return mApiService.RxGetEvents(0, LoadMoreViewEventAhead.LOAD_VIEW_SET_COUNT)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread());
     }
 }

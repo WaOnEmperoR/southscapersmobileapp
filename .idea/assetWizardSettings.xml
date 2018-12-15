@@ -5,22 +5,34 @@
       <map>
         <entry key="imageWizard">
           <value>
-            <PersistentState />
-          </value>
-        </entry>
-        <entry key="vectorWizard">
-          <value>
             <PersistentState>
               <option name="children">
                 <map>
-                  <entry key="vectorAssetStep">
+                  <entry key="imageAssetPanel">
                     <value>
                       <PersistentState>
+                        <option name="children">
+                          <map>
+                            <entry key="actionbar">
+                              <value>
+                                <PersistentState>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="assetType" value="IMAGE" />
+                                      <entry key="imageAsset" value="D:\Tugas PTIK\Lain-Lain\Icon\iconfinder_error-outline_3018555.png" />
+                                      <entry key="outputName" value="ic_error_outline" />
+                                      <entry key="theme" value="CUSTOM" />
+                                      <entry key="themeColor" value="180b7a" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
                         <option name="values">
                           <map>
-                            <entry key="assetSourceType" value="FILE" />
-                            <entry key="outputName" value="ic_if_calendar_115762" />
-                            <entry key="sourceFile" value="D:\Tugas PTIK\Lain-Lain\MockUpSouthscape\icons\if_calendar_115762.svg" />
+                            <entry key="outputIconType" value="ACTIONBAR" />
                           </map>
                         </option>
                       </PersistentState>
