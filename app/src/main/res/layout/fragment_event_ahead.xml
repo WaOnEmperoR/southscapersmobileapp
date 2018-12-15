@@ -12,8 +12,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/contentPlaceholderEventAhead"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <ProgressBar
+            android:id="@+id/event_ahead_progress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone" />
 
         <com.mindorks.placeholderview.InfinitePlaceHolderView
             android:id="@+id/loadMore_EventAhead"

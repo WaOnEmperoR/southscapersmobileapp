@@ -49,6 +49,7 @@ public class EventAheadFragment extends Fragment {
 
     private CompositeDisposable disposable = new CompositeDisposable();
     private Unbinder unbinder;
+    private View mProgressView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -85,6 +86,7 @@ public class EventAheadFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_event_ahead, container, false);
         mLoadMoreView = view.findViewById(R.id.loadMore_EventAhead);
+        mProgressView = view.findViewById(R.id.event_ahead_progress);
 
         unbinder = ButterKnife.bind(this.getActivity());
 
@@ -97,6 +99,8 @@ public class EventAheadFragment extends Fragment {
     private void SetupView()
     {
         Log.d(this.getClass().getSimpleName(), "SetupView");
+
+        mProgressView.setVisibility(View.VISIBLE);
 
         Observable<EventList> eventsAheadObservable = getEventAheadList();
 
@@ -113,6 +117,9 @@ public class EventAheadFragment extends Fragment {
                             {
                                 mLoadMoreView.addView(new ItemViewEventAhead(getActivity(), eventList.getEventArrayList().get(i)));
                             }
+
+                            mProgressView.setVisibility(View.GONE);
+                            this.dispose();
                         }
 
                         @Override
@@ -163,7 +170,7 @@ public class EventAheadFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        disposable.dispose();
+//        disposable.dispose();
         unbinder.unbind();
     }
 
