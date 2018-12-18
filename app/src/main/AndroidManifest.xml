@@ -64,7 +64,10 @@
 
         <activity
             android:name=".EventTabbedActivity"
-            android:label="@string/title_activity_event_tabbed"></activity>
+            android:label="@string/title_activity_event_tabbed" />
+        <activity
+            android:name=".PaymentTabbedActivity"
+            android:label="@string/title_activity_payment_tabbed"></activity>
     </application>
 
 </manifest>

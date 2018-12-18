@@ -54,4 +54,5 @@
     <string name="title_payment_submit_date">Submit Date</string>
     <string name="title_payment_verified_date">Verified Date</string>
     <string name="title_payment_rejection_cause">Rejection Cause</string>
+    <string name="title_activity_payment_tabbed">PaymentTabbedActivity</string>
 </resources>

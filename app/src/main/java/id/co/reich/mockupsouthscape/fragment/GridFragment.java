@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import id.co.reich.mockupsouthscape.AppController;
 import id.co.reich.mockupsouthscape.EventTabbedActivity;
+import id.co.reich.mockupsouthscape.PaymentTabbedActivity;
 import id.co.reich.mockupsouthscape.PlaceholderActivity;
 import id.co.reich.mockupsouthscape.R;
 
@@ -103,10 +104,15 @@ public class GridFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Toast.makeText(getActivity(), "Grid Item " + (i + 1) + " Selected", Toast.LENGTH_LONG).show();
+                Intent intent;
 
                 switch(i){
+                    case 1 :
+                        intent = new Intent(getActivity(),PaymentTabbedActivity.class);
+                        startActivity(intent);
+                        break;
                     case 3 :
-                        Intent intent = new Intent(getActivity(),EventTabbedActivity.class);
+                        intent = new Intent(getActivity(),EventTabbedActivity.class);
                         startActivity(intent);
                         break;
                     default:

@@ -19,8 +19,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import id.co.reich.mockupsouthscape.fragment.EventAheadFragment;
+import id.co.reich.mockupsouthscape.fragment.PaymentHistoryFragment;
 
-public class EventTabbedActivity extends Activity {
+public class PaymentTabbedActivity extends Activity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -40,7 +41,7 @@ public class EventTabbedActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_tabbed);
+        setContentView(R.layout.activity_payment_tabbed);
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
@@ -54,7 +55,7 @@ public class EventTabbedActivity extends Activity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_event_tabbed, menu);
+        getMenuInflater().inflate(R.menu.menu_payment_tabbed, menu);
         return true;
     }
 
@@ -101,20 +102,9 @@ public class EventTabbedActivity extends Activity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            int tab_number = getArguments().getInt(ARG_SECTION_NUMBER);
-            View rootView = null;
-
-            if (tab_number==-1)
-            {
-                rootView = inflater.inflate(R.layout.fragment_event_ahead, container, false);
-            }
-            else
-            {
-                rootView = inflater.inflate(R.layout.fragment_event_tabbed, container, false);
-                TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-                textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
-            }
-
+            View rootView = inflater.inflate(R.layout.fragment_payment_tabbed, container, false);
+            TextView textView = (TextView) rootView.findViewById(R.id.section_label);
+            textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
             return rootView;
         }
     }
@@ -131,29 +121,31 @@ public class EventTabbedActivity extends Activity {
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
             if (position == 0)
             {
-                return EventAheadFragment.newInstance();
+                return PaymentHistoryFragment.newInstance();
             }
 
+            // getItem is called to instantiate the fragment for the given page.
+            // Return a PlaceholderFragment (defined as a static inner class below).
             return PlaceholderFragment.newInstance(position + 1);
         }
 
         @Override
         public int getCount() {
-            // Show 2 total pages.
-            return 2;
+            // Show 3 total pages.
+            return 3;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "Events Ahead";
+                    return "Payment History";
                 case 1:
-                    return "Events Completed";
+                    return "Unpaid Payment";
+                case 2:
+                    return "Submit Payment";
             }
             return null;
         }

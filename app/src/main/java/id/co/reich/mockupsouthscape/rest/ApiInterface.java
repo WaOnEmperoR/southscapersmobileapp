@@ -1,8 +1,12 @@
 package id.co.reich.mockupsouthscape.rest;
 
+import java.util.List;
+
 import id.co.reich.mockupsouthscape.pojo.EventList;
+import id.co.reich.mockupsouthscape.pojo.Payment;
 import id.co.reich.mockupsouthscape.pojo.PaymentList;
 import id.co.reich.mockupsouthscape.pojo.UserDetail;
+import io.reactivex.Single;
 import okhttp3.ResponseBody;
 import io.reactivex.Observable;
 import retrofit2.Call;
@@ -29,10 +33,10 @@ public interface ApiInterface {
                               @Path("end") int end);
 
     @GET("payments/{begin}/{end}")
-    Call<PaymentList> getPayments(@Header("Accept") String accept,
-                                  @Header("Authorization") String auth,
-                                  @Path("begin") int begin,
-                                  @Path("end") int end);
+    Single<List<Payment>> RxGetPayments(@Header("Accept") String accept,
+                                      @Header("Authorization") String auth,
+                                      @Path("begin") int begin,
+                                      @Path("end") int end);
 
     @FormUrlEncoded
     @POST("login")
