@@ -119,7 +119,6 @@ public class EventAheadFragment extends Fragment {
                             }
 
                             mProgressView.setVisibility(View.GONE);
-                            this.dispose();
                         }
 
                         @Override
@@ -130,6 +129,7 @@ public class EventAheadFragment extends Fragment {
                         @Override
                         public void onComplete() {
                             Log.e(this.getClass().getSimpleName(), "onComplete from RXJava");
+                            this.dispose();
                         }
                     })
         );
@@ -170,7 +170,6 @@ public class EventAheadFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-//        disposable.dispose();
         unbinder.unbind();
     }
 

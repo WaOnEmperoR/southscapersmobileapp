@@ -28,7 +28,6 @@ public class LoadMoreViewEventAhead {
     public static final int LOAD_VIEW_SET_COUNT = 3;
 
     private InfinitePlaceHolderView mLoadMoreView;
-//    private ApiInterface mApiService;
     private CompositeDisposable disposable = new CompositeDisposable();
 
     public LoadMoreViewEventAhead(InfinitePlaceHolderView loadMoreView) {
@@ -95,6 +94,7 @@ public class LoadMoreViewEventAhead {
                                         @Override
                                         public void onComplete() {
                                             Log.e(this.getClass().getSimpleName(), "onComplete from RXJava");
+                                            this.dispose();
                                         }
                                     })
                     );
