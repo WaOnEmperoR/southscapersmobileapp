@@ -115,10 +115,9 @@ public class PaymentHistoryFragment extends Fragment {
             String mPassword = mAccountManager.getPassword(account);
             Log.d(TAG, "Password : " + mPassword);
 
+            getTokenVer02(account, 0, 10, user_email, mPassword);
+
         }
-
-        getTokenVer02(account, 0, 10);
-
         return view;
     }
 
@@ -173,7 +172,7 @@ public class PaymentHistoryFragment extends Fragment {
         });
     }
 
-    private void getTokenVer02(Account account, final int begin, final int end)
+    private void getTokenVer02(Account account, final int begin, final int end, final String email, final String password)
     {
         final ApiInterface mApiService = ApiClient.getClient().create(ApiInterface.class);
 
@@ -198,6 +197,49 @@ public class PaymentHistoryFragment extends Fragment {
                                         return io.reactivex.Observable.fromIterable(payments);
                                     }
                                 });
+                    }
+                })
+                .onErrorResumeNext(new Function<Throwable, ObservableSource<Payment>>() {
+                    @Override
+                    public ObservableSource<Payment> apply(Throwable throwable) throws Exception {
+                        if (throwable.getMessage().equals("HTTP 401 "))
+                        {
+                            Log.d(TAG, "HTTP 401 Error Unauthorized : " + throwable.getMessage());
+                            return mApiService.RxLogin(email, password)
+                                    .subscribeOn(Schedulers.io())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .map(new Function<ResponseBody, String>() {
+                                        @Override
+                                        public String apply(ResponseBody responseBody) throws Exception {
+                                            JSONObject jsonRESULTS = new JSONObject(responseBody.string());
+                                            String token = jsonRESULTS.get("token").toString();
+                                            Log.d(TAG, "token from RxJava = " + token);
+
+                                            return jsonRESULTS.get("token").toString();
+                                        }
+                                    })
+                                    .flatMap(new Function<String, ObservableSource<Payment>>() {
+                                        @Override
+                                        public ObservableSource<Payment> apply(String s) throws Exception {
+                                            return mApiService.RxGetPayments("application/json", "Bearer " + s, 0, 10)
+                                                    .toObservable()
+                                                    .subscribeOn(Schedulers.io())
+                                                    .observeOn(AndroidSchedulers.mainThread())
+                                                    .flatMap(new Function<List<Payment>, ObservableSource<Payment>>() {
+                                                        @Override
+                                                        public ObservableSource<Payment> apply(List<Payment> payments) throws Exception {
+                                                            return io.reactivex.Observable.fromIterable(payments);
+                                                        }
+                                                    });
+
+                                        }
+                                    });
+                        }
+                        else
+                        {
+                            Log.d(TAG, "Not an HTTP 401 error : " + throwable.getMessage());
+                            return io.reactivex.Observable.error(throwable);
+                        }
                     }
                 })
                 .subscribeWith(new Observer<Payment>() {
