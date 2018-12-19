@@ -32,7 +32,7 @@ public interface ApiInterface {
     Call<EventList> getEvents(@Path("begin") int begin,
                               @Path("end") int end);
 
-    @GET("payments/{begin}/{end}")
+    @GET("payment/{begin}/{end}")
     Single<List<Payment>> RxGetPayments(@Header("Accept") String accept,
                                       @Header("Authorization") String auth,
                                       @Path("begin") int begin,
