@@ -15,6 +15,14 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+        <ProgressBar
+            android:id="@+id/payment_history_progress"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone" />
+
         <com.mindorks.placeholderview.InfinitePlaceHolderView
             android:id="@+id/loadMore_PaymentHistory"
             android:layout_width="match_parent"
