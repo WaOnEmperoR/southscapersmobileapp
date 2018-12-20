@@ -2,11 +2,8 @@ package id.co.reich.mockupsouthscape.fragment;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AuthenticatorException;
-import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.text.TextUtils;
@@ -19,11 +16,9 @@ import com.mindorks.placeholderview.InfinitePlaceHolderView;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Observable;
 import java.util.concurrent.Callable;
 
 import butterknife.ButterKnife;
@@ -31,24 +26,18 @@ import butterknife.Unbinder;
 import id.co.reich.mockupsouthscape.AppController;
 import id.co.reich.mockupsouthscape.R;
 import id.co.reich.mockupsouthscape.pojo.Payment;
-import id.co.reich.mockupsouthscape.pojo.PaymentList;
 import id.co.reich.mockupsouthscape.rest.ApiClient;
 import id.co.reich.mockupsouthscape.rest.ApiInterface;
-import id.co.reich.mockupsouthscape.session.Utils;
+import id.co.reich.mockupsouthscape.session.Constants;
 import id.co.reich.mockupsouthscape.view.ItemViewPaymentHistory;
-import id.co.reich.mockupsouthscape.view.LoadMoreViewEventAhead;
 import id.co.reich.mockupsouthscape.view.LoadMoreViewPaymentHistory;
 import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
-import retrofit2.HttpException;
-import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -122,7 +111,7 @@ public class PaymentHistoryFragment extends Fragment {
         mAuthTokenType = getString(R.string.auth_type);
 
         HashMap<String, String> hashMap = app().getSession().getUserDetails();
-        String user_email = hashMap.get(Utils.KEY_EMAIL);
+        String user_email = hashMap.get(Constants.KEY_EMAIL);
 
         Account account = findAccount(user_email);
         if (account!=null)

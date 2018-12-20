@@ -1,8 +1,6 @@
 package id.co.reich.mockupsouthscape;
 
-import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -15,22 +13,16 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.HashMap;
 
 import id.co.reich.mockupsouthscape.fragment.GridFragment;
-import id.co.reich.mockupsouthscape.session.Utils;
+import id.co.reich.mockupsouthscape.session.Constants;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, GridFragment.OnFragmentInteractionListener {
 
@@ -66,11 +58,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         TextView nav_user = hView.findViewById(R.id.txtView_username);
 
         HashMap hm = app().getSession().getUserDetails();
-        String user_name = (String) hm.get(Utils.KEY_USERNAME);
+        String user_name = (String) hm.get(Constants.KEY_USERNAME);
         nav_user.setText(user_name);
 
         ImageView img_avatar = hView.findViewById(R.id.imgView_avatar);
-        String base64image = (String) hm.get(Utils.KEY_IMAGE_AVATAR);
+        String base64image = (String) hm.get(Constants.KEY_IMAGE_AVATAR);
         img_avatar.setImageBitmap(ImageHelper.decodeImage(base64image));
 
         mContentFrame = findViewById(R.id.nav_contentframe);

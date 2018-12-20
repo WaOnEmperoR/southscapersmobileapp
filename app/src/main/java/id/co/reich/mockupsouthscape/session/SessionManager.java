@@ -16,19 +16,19 @@ public class SessionManager {
 
     public SessionManager(Context context) {
         this.mContext = context;
-        pref = mContext.getSharedPreferences(Utils.APP_NAME, PRIVATE_MODE);
+        pref = mContext.getSharedPreferences(Constants.APP_NAME, PRIVATE_MODE);
         editor = pref.edit();
     }
 
     public void createLoginSession(String userid, String username, String email, String gender, String birth_date, String address, String image_avatar) {
-        editor.putBoolean(Utils.IS_LOGIN, true);
-        editor.putString(Utils.KEY_USER_ID, userid );
-        editor.putString(Utils.KEY_USERNAME, username);
-        editor.putString(Utils.KEY_EMAIL, email);
-        editor.putString(Utils.KEY_GENDER, gender);
-        editor.putString(Utils.KEY_BIRTH_DATE, birth_date);
-        editor.putString(Utils.KEY_ADDRESS, address);
-        editor.putString(Utils.KEY_IMAGE_AVATAR, image_avatar);
+        editor.putBoolean(Constants.IS_LOGIN, true);
+        editor.putString(Constants.KEY_USER_ID, userid );
+        editor.putString(Constants.KEY_USERNAME, username);
+        editor.putString(Constants.KEY_EMAIL, email);
+        editor.putString(Constants.KEY_GENDER, gender);
+        editor.putString(Constants.KEY_BIRTH_DATE, birth_date);
+        editor.putString(Constants.KEY_ADDRESS, address);
+        editor.putString(Constants.KEY_IMAGE_AVATAR, image_avatar);
         editor.commit();
     }
 
@@ -44,18 +44,18 @@ public class SessionManager {
 
     public HashMap<String, String> getUserDetails() {
         HashMap<String, String> user = new HashMap<String, String>();
-        user.put(Utils.KEY_USER_ID, pref.getString(Utils.KEY_USER_ID, null));
-        user.put(Utils.KEY_USERNAME, pref.getString(Utils.KEY_USERNAME, null));
-        user.put(Utils.KEY_EMAIL, pref.getString(Utils.KEY_EMAIL, null));
-        user.put(Utils.KEY_GENDER, pref.getString(Utils.KEY_GENDER, null));
-        user.put(Utils.KEY_BIRTH_DATE, pref.getString(Utils.KEY_BIRTH_DATE, null));
-        user.put(Utils.KEY_ADDRESS, pref.getString(Utils.KEY_ADDRESS, null));
-        user.put(Utils.KEY_IMAGE_AVATAR, pref.getString(Utils.KEY_IMAGE_AVATAR, null));
+        user.put(Constants.KEY_USER_ID, pref.getString(Constants.KEY_USER_ID, null));
+        user.put(Constants.KEY_USERNAME, pref.getString(Constants.KEY_USERNAME, null));
+        user.put(Constants.KEY_EMAIL, pref.getString(Constants.KEY_EMAIL, null));
+        user.put(Constants.KEY_GENDER, pref.getString(Constants.KEY_GENDER, null));
+        user.put(Constants.KEY_BIRTH_DATE, pref.getString(Constants.KEY_BIRTH_DATE, null));
+        user.put(Constants.KEY_ADDRESS, pref.getString(Constants.KEY_ADDRESS, null));
+        user.put(Constants.KEY_IMAGE_AVATAR, pref.getString(Constants.KEY_IMAGE_AVATAR, null));
         return user;
     }
 
     public boolean isLoggedIn() {
-        return pref.getBoolean(Utils.IS_LOGIN, false);
+        return pref.getBoolean(Constants.IS_LOGIN, false);
     }
 
     public Context getContext(){

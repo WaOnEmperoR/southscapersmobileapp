@@ -17,7 +17,7 @@ import java.util.List;
 import id.co.reich.mockupsouthscape.model.InfiniteFeedInfo;
 
 public class Utils {
-    private static final String TAG = "Utils";
+    private static final String TAG = "Constants";
 
     public static List<InfiniteFeedInfo> loadInfiniteFeeds(Context context){
         try{

@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 
 import com.mindorks.placeholderview.InfinitePlaceHolderView;
 import com.mindorks.placeholderview.annotations.Layout;
@@ -24,7 +23,7 @@ import id.co.reich.mockupsouthscape.R;
 import id.co.reich.mockupsouthscape.pojo.Payment;
 import id.co.reich.mockupsouthscape.rest.ApiClient;
 import id.co.reich.mockupsouthscape.rest.ApiInterface;
-import id.co.reich.mockupsouthscape.session.Utils;
+import id.co.reich.mockupsouthscape.session.Constants;
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -81,7 +80,7 @@ public class LoadMoreViewPaymentHistory {
                     Log.d(TAG, "count : " + count);
 
                     HashMap<String, String> hashMap = app().getSession().getUserDetails();
-                    String user_email = hashMap.get(Utils.KEY_EMAIL);
+                    String user_email = hashMap.get(Constants.KEY_EMAIL);
 
                     Account account = findAccount(user_email);
                     if (account!=null)

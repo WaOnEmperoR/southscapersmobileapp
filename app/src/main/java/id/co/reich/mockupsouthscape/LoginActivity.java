@@ -18,7 +18,6 @@ import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -35,7 +34,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -44,24 +42,16 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import id.co.reich.mockupsouthscape.async.LoginTask;
-import id.co.reich.mockupsouthscape.async.OnTaskCompleted;
 import id.co.reich.mockupsouthscape.pojo.UserDetail;
 import id.co.reich.mockupsouthscape.rest.ApiClient;
 import id.co.reich.mockupsouthscape.rest.ApiInterface;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import static android.Manifest.permission.ACCOUNT_MANAGER;
 import static android.Manifest.permission.GET_ACCOUNTS;
@@ -97,7 +87,6 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
     private AccountManager mAccountManager;
     private String mAuthTokenType;
     private String accountName;
-    private LoginTask loginTask;
 
     public final static String ARG_ACCOUNT_TYPE = "ACCOUNT_TYPE";
     public final static String ARG_AUTH_TYPE = "AUTH_TYPE";
@@ -289,7 +278,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements Loade
                                 mPasswordView.setError(getString(R.string.error_incorrect_password));
                                 mPasswordView.requestFocus();
 
-                                Log.e(TAG, e.getMessage() + "from rxjava");
+                                Log.e(TAG, e.getMessage());
                             }
 
                             @Override
