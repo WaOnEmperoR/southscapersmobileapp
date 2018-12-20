@@ -194,6 +194,8 @@ public class PaymentHistoryFragment extends Fragment {
         Log.d(this.getClass().getSimpleName(), "SetupView");
         mProgressView.setVisibility(View.VISIBLE);
 
+        final ArrayList<Payment> arrayListPayment = new ArrayList<>();
+
         io.reactivex.Observable<List<Payment>> paymentListObservable = getPaymentList(account, begin, end, email, password);
 
         disposable.add(
@@ -209,7 +211,10 @@ public class PaymentHistoryFragment extends Fragment {
                     .subscribeWith(new DisposableObserver<Payment>() {
                         @Override
                         public void onNext(Payment payment) {
-                            mLoadMoreView.addView(new ItemViewPaymentHistory(getActivity(), payment));
+                            Log.d(TAG, payment.getPaymentSubmitted());
+                            Log.d(TAG, payment.getPaymentType());
+                            Log.d(TAG, payment.getPaymentSession());
+                            arrayListPayment.add(payment);
                         }
 
                         @Override
@@ -221,6 +226,12 @@ public class PaymentHistoryFragment extends Fragment {
                         public void onComplete() {
                             Log.d(TAG, "onComplete from Setup View");
                             mProgressView.setVisibility(View.GONE);
+
+                            for (int i=0; i<arrayListPayment.size(); i++)
+                            {
+                                mLoadMoreView.addView(new ItemViewPaymentHistory(getActivity(), arrayListPayment.get(i)));
+                            }
+
                             this.dispose();
                         }
                     })
@@ -284,94 +295,5 @@ public class PaymentHistoryFragment extends Fragment {
                 });
     }
 
-    private void getTokenVer02(Account account, final int begin, final int end, final String email, final String password)
-    {
-        final ApiInterface mApiService = ApiClient.getClient().create(ApiInterface.class);
-
-        io.reactivex.Observable<String> tokenObservable = getAuthToken(account, mAuthTokenType, true);
-
-        tokenObservable
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(new Function<String, ObservableSource<Payment>>() {
-                    @Override
-                    public ObservableSource<Payment> apply(String s) throws Exception {
-                        Log.d(TAG, "Token in Tokenver02 : " + s);
-                        s = s.substring(2);
-                        Log.d(TAG, "Modified Token in Tokenver02 : " + s);
-                        return mApiService.RxGetPayments("application/json", "Bearer " + s, begin, end)
-                                .toObservable()
-                                .subscribeOn(Schedulers.io())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .flatMap(new Function<List<Payment>, ObservableSource<Payment>>() {
-                                    @Override
-                                    public ObservableSource<Payment> apply(List<Payment> payments) throws Exception {
-                                        return io.reactivex.Observable.fromIterable(payments);
-                                    }
-                                });
-                    }
-                })
-                .onErrorResumeNext(new Function<Throwable, ObservableSource<Payment>>() {
-                    @Override
-                    public ObservableSource<Payment> apply(Throwable throwable) throws Exception {
-                        if (throwable.getMessage().equals("HTTP 401 "))
-                        {
-                            Log.d(TAG, "HTTP 401 Error Unauthorized : " + throwable.getMessage());
-                            return mApiService.RxLogin(email, password)
-                                    .subscribeOn(Schedulers.io())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .map(new Function<ResponseBody, String>() {
-                                        @Override
-                                        public String apply(ResponseBody responseBody) throws Exception {
-                                            JSONObject jsonRESULTS = new JSONObject(responseBody.string());
-                                            String token = jsonRESULTS.get("token").toString();
-                                            Log.d(TAG, "token from RxJava = " + token);
-
-                                            return jsonRESULTS.get("token").toString();
-                                        }
-                                    })
-                                    .flatMap(new Function<String, ObservableSource<Payment>>() {
-                                        @Override
-                                        public ObservableSource<Payment> apply(String s) throws Exception {
-                                            return mApiService.RxGetPayments("application/json", "Bearer " + s, 0, 10)
-                                                    .toObservable()
-                                                    .subscribeOn(Schedulers.io())
-                                                    .observeOn(AndroidSchedulers.mainThread())
-                                                    .flatMap(new Function<List<Payment>, ObservableSource<Payment>>() {
-                                                        @Override
-                                                        public ObservableSource<Payment> apply(List<Payment> payments) throws Exception {
-                                                            return io.reactivex.Observable.fromIterable(payments);
-                                                        }
-                                                    });
-
-                                        }
-                                    });
-                        }
-                        else
-                        {
-                            Log.d(TAG, "Not an HTTP 401 error : " + throwable.getMessage());
-                            return io.reactivex.Observable.error(throwable);
-                        }
-                    }
-                })
-                .subscribeWith(new DisposableObserver<Payment>() {
-                    @Override
-                    public void onNext(Payment payment) {
-                        Log.d(TAG, payment.getPaymentType());
-                        Log.d(TAG, payment.getPaymentSubmitted());
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.e(TAG, "onError from Get Token ver 02 : " + e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.d(TAG, "onComplete from Get Token ver 02");
-                        this.dispose();
-                    }
-                });
-    }
 
 }

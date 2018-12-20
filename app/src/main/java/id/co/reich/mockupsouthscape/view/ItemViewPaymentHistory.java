@@ -1,6 +1,7 @@
 package id.co.reich.mockupsouthscape.view;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -48,13 +49,14 @@ public class ItemViewPaymentHistory {
 
     @Resolve
     private void onResolved() {
-        SimpleDateFormat preFormatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        SimpleDateFormat postFormatter = new SimpleDateFormat("dd MMMM yyyy HH:mm");
+        SimpleDateFormat preFormatter = new SimpleDateFormat("yyyy-dd-MM");
+        SimpleDateFormat postFormatter = new SimpleDateFormat("dd MMMM yyyy");
 
         tv_payment_type.setText(mPayment.getPaymentType());
         tv_payment_session.setText(mPayment.getPaymentSession());
 
         try {
+            Log.d("ItemViewPaymentHistory", mPayment.getPaymentSubmitted());
             Date date_submitted = preFormatter.parse(mPayment.getPaymentSubmitted());
             String submitted_date = postFormatter.format(date_submitted);
 
@@ -76,7 +78,7 @@ public class ItemViewPaymentHistory {
             }
 
             // If the rejection field is null then it is accepted. Otherwise rejected
-            if (!mPayment.getRejectionCause().equals(""))
+            if (mPayment.getRejectionCause()!=null)
             {
                 img_verification_status.setImageResource(R.drawable.ic_check_outline);
                 tv_verification_status.setText("Pembayaran Diterima");

@@ -9,10 +9,12 @@ import android.util.Log;
 import android.view.View;
 
 import com.mindorks.placeholderview.InfinitePlaceHolderView;
+import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.infinite.LoadMore;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -31,6 +33,7 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
+@Layout(R.layout.load_more_view)
 public class LoadMoreViewPaymentHistory {
     public static final int LOAD_VIEW_SET_COUNT = 3;
 
@@ -39,15 +42,18 @@ public class LoadMoreViewPaymentHistory {
     private final String TAG = this.getClass().getSimpleName();
     private String mAuthTokenType;
     private AccountManager mAccountManager;
+    private String mPassword;
 
     public LoadMoreViewPaymentHistory(InfinitePlaceHolderView loadMoreView) {
         this.mLoadMoreView = loadMoreView;
         mAuthTokenType = "id.co.reich.auth_southscapers";
+
     }
 
     @LoadMore
     private void onLoadMore(){
-        Log.d("DEBUG", "onLoadMore");
+        Log.d(TAG,"onLoadMore");
+        mAccountManager = AccountManager.get(app().getApplicationContext());
         new ForcedWaitedLoading();
     }
 
@@ -72,7 +78,7 @@ public class LoadMoreViewPaymentHistory {
                 @Override
                 public void run() {
                     int count = mLoadMoreView.getViewCount();
-                    Log.d("DEBUG", "count " + count);
+                    Log.d(TAG, "count : " + count);
 
                     HashMap<String, String> hashMap = app().getSession().getUserDetails();
                     String user_email = hashMap.get(Utils.KEY_EMAIL);
@@ -80,8 +86,10 @@ public class LoadMoreViewPaymentHistory {
                     Account account = findAccount(user_email);
                     if (account!=null)
                     {
-                        String mPassword = mAccountManager.getPassword(account);
+                        mPassword = mAccountManager.getPassword(account);
                         Log.d(TAG, "Password : " + mPassword);
+
+                        final ArrayList<Payment> arrayListPayment = new ArrayList<>();
 
                         io.reactivex.Observable<List<Payment>> paymentListObservable = getPaymentList(account, count, LoadMoreViewPaymentHistory.LOAD_VIEW_SET_COUNT, user_email, mPassword);
 
@@ -98,8 +106,7 @@ public class LoadMoreViewPaymentHistory {
                                         .subscribeWith(new DisposableObserver<Payment>() {
                                             @Override
                                             public void onNext(Payment payment) {
-                                                mLoadMoreView.addView(new ItemViewPaymentHistory(mLoadMoreView.getContext(), payment));
-                                                mLoadMoreView.loadingDone();
+                                                arrayListPayment.add(payment);
                                             }
 
                                             @Override
@@ -110,7 +117,23 @@ public class LoadMoreViewPaymentHistory {
                                             @Override
                                             public void onComplete() {
                                                 Log.d(TAG, "onComplete from Load More View");
-                                                mLoadMoreView.noMoreToLoad();
+                                                Log.d(TAG, "Array List Size : " + arrayListPayment.size());
+                                                if (arrayListPayment.size()==0)
+                                                {
+//                                                    mLoadMoreView.loadingDone();
+                                                    mLoadMoreView.noMoreToLoad();
+                                                    this.dispose();
+                                                }
+                                                else
+                                                {
+                                                    for (int i=0; i<arrayListPayment.size(); i++)
+                                                    {
+                                                        mLoadMoreView.addView(new ItemViewPaymentHistory(mLoadMoreView.getContext(), arrayListPayment.get(i)));
+                                                    }
+                                                }
+
+                                                mLoadMoreView.loadingDone();
+
                                                 this.dispose();
                                             }
                                         })
