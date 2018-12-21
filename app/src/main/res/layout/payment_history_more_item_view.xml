@@ -41,8 +41,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingTop="5dp"
-            android:layout_margin="3dp">
+            android:padding="5dp"
+            android:layout_margin="2dp">
 
             <ImageView
                 android:id="@+id/imgView_submitDate"
@@ -63,8 +63,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingTop="5dp"
-            android:layout_margin="3dp">
+            android:padding="5dp"
+            android:layout_margin="2dp">
 
             <ImageView
                 android:id="@+id/imgView_verification_status"
@@ -85,8 +85,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingTop="5dp"
-            android:layout_margin="3dp">
+            android:padding="5dp"
+            android:layout_margin="2dp">
 
             <ImageView
                 android:id="@+id/imgView_verifiedDate"
@@ -107,8 +107,8 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:paddingTop="5dp"
-            android:layout_margin="3dp">
+            android:padding="5dp"
+            android:layout_margin="2dp">
 
             <ImageView
                 android:id="@+id/imgView_rejectionCause"

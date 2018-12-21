@@ -32,7 +32,7 @@ public interface ApiInterface {
     Call<EventList> getEvents(@Path("begin") int begin,
                               @Path("end") int end);
 
-    @GET("payment/{begin}/{end}")
+    @GET("payments_history/{begin}/{end}")
     Single<List<Payment>> RxGetPayments(@Header("Accept") String accept,
                                       @Header("Authorization") String auth,
                                       @Path("begin") int begin,
@@ -47,7 +47,8 @@ public interface ApiInterface {
     Observable<UserDetail> RxUserDetails(@Header("Accept") String accept,
                                          @Header("Authorization") String auth);
 
-    @GET("get_events/{begin}/{end}")
+    @GET("get_events/{begin}/{end}/{choice}")
     Observable<EventList> RxGetEvents(@Path("begin") int begin,
-                                      @Path("end") int end);
+                                      @Path("end") int end,
+                                      @Path("choice") int choice);
 }

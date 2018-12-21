@@ -14,23 +14,16 @@ import com.mindorks.placeholderview.InfinitePlaceHolderView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import id.co.reich.mockupsouthscape.R;
-import id.co.reich.mockupsouthscape.pojo.Event;
 import id.co.reich.mockupsouthscape.pojo.EventList;
-import id.co.reich.mockupsouthscape.pojo.UserDetail;
 import id.co.reich.mockupsouthscape.rest.ApiClient;
 import id.co.reich.mockupsouthscape.rest.ApiInterface;
 import id.co.reich.mockupsouthscape.view.ItemViewEventAhead;
 import id.co.reich.mockupsouthscape.view.LoadMoreViewEventAhead;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.functions.Function;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -176,7 +169,7 @@ public class EventAheadFragment extends Fragment {
     private Observable<EventList> getEventAheadList()
     {
         final ApiInterface mApiService = ApiClient.getClient().create(ApiInterface.class);
-        return mApiService.RxGetEvents(0, LoadMoreViewEventAhead.LOAD_VIEW_SET_COUNT)
+        return mApiService.RxGetEvents(0, LoadMoreViewEventAhead.LOAD_VIEW_SET_COUNT, 1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

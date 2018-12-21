@@ -8,8 +8,6 @@ import com.mindorks.placeholderview.InfinitePlaceHolderView;
 import com.mindorks.placeholderview.annotations.Layout;
 import com.mindorks.placeholderview.annotations.infinite.LoadMore;
 
-import butterknife.ButterKnife;
-import butterknife.Unbinder;
 import id.co.reich.mockupsouthscape.R;
 import id.co.reich.mockupsouthscape.pojo.EventList;
 import id.co.reich.mockupsouthscape.rest.ApiClient;
@@ -19,9 +17,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 @Layout(R.layout.load_more_view)
 public class LoadMoreViewEventAhead {
@@ -107,7 +102,7 @@ public class LoadMoreViewEventAhead {
     private Observable<EventList> getEventAheadList(int start)
     {
         final ApiInterface mApiService = ApiClient.getClient().create(ApiInterface.class);
-        return mApiService.RxGetEvents(start, LoadMoreViewEventAhead.LOAD_VIEW_SET_COUNT)
+        return mApiService.RxGetEvents(start, LoadMoreViewEventAhead.LOAD_VIEW_SET_COUNT, 1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }
