@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.EventAheadFragment">
+    tools:context=".fragment.EventFragment">
 
     <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -11,13 +11,13 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/contentPlaceholderEventAhead"
+        android:id="@+id/contentPlaceholderEvent"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <ProgressBar
-            android:id="@+id/event_ahead_progress"
+            android:id="@+id/event_progress"
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -25,7 +25,7 @@
             android:visibility="gone" />
 
         <com.mindorks.placeholderview.InfinitePlaceHolderView
-            android:id="@+id/loadMore_EventAhead"
+            android:id="@+id/loadMore_Event"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </LinearLayout>

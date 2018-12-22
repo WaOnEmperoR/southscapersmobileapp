@@ -16,8 +16,8 @@ import java.util.Date;
 import id.co.reich.mockupsouthscape.R;
 import id.co.reich.mockupsouthscape.pojo.Payment;
 
-@Layout(R.layout.payment_history_more_item_view)
-public class ItemViewPaymentHistory {
+@Layout(R.layout.payment_more_item_view)
+public class ItemViewPayment {
     @View(R.id.txt_payment_session)
     private TextView tv_payment_session;
 
@@ -42,7 +42,7 @@ public class ItemViewPaymentHistory {
     private Payment mPayment;
     private Context mContext;
 
-    public ItemViewPaymentHistory(Context context, Payment payment) {
+    public ItemViewPayment(Context context, Payment payment) {
         mContext = context;
         mPayment = payment;
     }
@@ -56,7 +56,7 @@ public class ItemViewPaymentHistory {
         tv_payment_session.setText(mPayment.getPaymentSession());
 
         try {
-            Log.d("ItemViewPaymentHistory", mPayment.getPaymentSubmitted());
+            Log.d("ItemViewPayment", mPayment.getPaymentSubmitted());
             Date date_submitted = preFormatter.parse(mPayment.getPaymentSubmitted());
             String submitted_date = postFormatter.format(date_submitted);
 

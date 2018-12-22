@@ -15,8 +15,8 @@ import java.util.Date;
 import id.co.reich.mockupsouthscape.R;
 import id.co.reich.mockupsouthscape.pojo.Event;
 
-@Layout(R.layout.event_ahead_more_item_view)
-public class ItemViewEventAhead {
+@Layout(R.layout.event_more_item_view)
+public class ItemViewEvent {
     @View(R.id.txt_event_title)
     private TextView tv_event_name;
 
@@ -32,7 +32,7 @@ public class ItemViewEventAhead {
     private Event mEvent;
     private Context mContext;
 
-    public ItemViewEventAhead(Context context, Event event) {
+    public ItemViewEvent(Context context, Event event) {
         mContext = context;
         mEvent = event;
     }

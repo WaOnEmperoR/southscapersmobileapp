@@ -17,8 +17,8 @@ import id.co.reich.mockupsouthscape.R;
 import id.co.reich.mockupsouthscape.pojo.EventList;
 import id.co.reich.mockupsouthscape.rest.ApiClient;
 import id.co.reich.mockupsouthscape.rest.ApiInterface;
-import id.co.reich.mockupsouthscape.view.ItemViewEventAhead;
-import id.co.reich.mockupsouthscape.view.LoadMoreViewEventAhead;
+import id.co.reich.mockupsouthscape.view.ItemViewEvent;
+import id.co.reich.mockupsouthscape.view.LoadMoreViewEvent;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -28,17 +28,19 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link EventAheadFragment.OnFragmentInteractionListener} interface
+ * {@link EventFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link EventAheadFragment#newInstance} factory method to
+ * Use the {@link EventFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class EventAheadFragment extends Fragment {
+public class EventFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_PARAM3 = "event_choice";
     private InfinitePlaceHolderView mLoadMoreView;
+    // choice == 1 -> event ahead
+    // choice == 2 -> event completed
+    private int mChoice;
 
     private CompositeDisposable disposable = new CompositeDisposable();
     private Unbinder unbinder;
@@ -48,7 +50,7 @@ public class EventAheadFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public EventAheadFragment() {
+    public EventFragment() {
         // Required empty public constructor
     }
 
@@ -56,11 +58,11 @@ public class EventAheadFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment EventAheadFragment.
+     * @return A new instance of fragment EventFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static EventAheadFragment newInstance() {
-        EventAheadFragment fragment = new EventAheadFragment();
+    public static EventFragment newInstance() {
+        EventFragment fragment = new EventFragment();
         return fragment;
     }
 
@@ -68,8 +70,7 @@ public class EventAheadFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mChoice = getArguments().getInt(ARG_PARAM3);
         }
     }
 
@@ -77,9 +78,9 @@ public class EventAheadFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_event_ahead, container, false);
-        mLoadMoreView = view.findViewById(R.id.loadMore_EventAhead);
-        mProgressView = view.findViewById(R.id.event_ahead_progress);
+        View view = inflater.inflate(R.layout.fragment_event, container, false);
+        mLoadMoreView = view.findViewById(R.id.loadMore_Event);
+        mProgressView = view.findViewById(R.id.event_progress);
 
         unbinder = ButterKnife.bind(this.getActivity());
 
@@ -108,7 +109,7 @@ public class EventAheadFragment extends Fragment {
 
                             for (int i=0; i<eventList.getEventArrayList().size(); i++)
                             {
-                                mLoadMoreView.addView(new ItemViewEventAhead(getActivity(), eventList.getEventArrayList().get(i)));
+                                mLoadMoreView.addView(new ItemViewEvent(getActivity(), eventList.getEventArrayList().get(i)));
                             }
 
                             mProgressView.setVisibility(View.GONE);
@@ -127,7 +128,7 @@ public class EventAheadFragment extends Fragment {
                     })
         );
 
-        mLoadMoreView.setLoadMoreResolver(new LoadMoreViewEventAhead(mLoadMoreView));
+        mLoadMoreView.setLoadMoreResolver(new LoadMoreViewEvent(mLoadMoreView));
 
     }
 
@@ -169,7 +170,7 @@ public class EventAheadFragment extends Fragment {
     private Observable<EventList> getEventAheadList()
     {
         final ApiInterface mApiService = ApiClient.getClient().create(ApiInterface.class);
-        return mApiService.RxGetEvents(0, LoadMoreViewEventAhead.LOAD_VIEW_SET_COUNT, 1)
+        return mApiService.RxGetEvents(0, LoadMoreViewEvent.LOAD_VIEW_SET_COUNT, mChoice)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

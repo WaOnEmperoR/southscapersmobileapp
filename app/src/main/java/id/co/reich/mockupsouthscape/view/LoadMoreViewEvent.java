@@ -19,13 +19,13 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 @Layout(R.layout.load_more_view)
-public class LoadMoreViewEventAhead {
+public class LoadMoreViewEvent {
     public static final int LOAD_VIEW_SET_COUNT = 3;
 
     private InfinitePlaceHolderView mLoadMoreView;
     private CompositeDisposable disposable = new CompositeDisposable();
 
-    public LoadMoreViewEventAhead(InfinitePlaceHolderView loadMoreView) {
+    public LoadMoreViewEvent(InfinitePlaceHolderView loadMoreView) {
         this.mLoadMoreView = loadMoreView;
     }
 
@@ -76,7 +76,7 @@ public class LoadMoreViewEventAhead {
 
                                             for (int i=0; i<eventList.getEventArrayList().size(); i++)
                                             {
-                                                mLoadMoreView.addView(new ItemViewEventAhead(mLoadMoreView.getContext(), eventList.getEventArrayList().get(i)));
+                                                mLoadMoreView.addView(new ItemViewEvent(mLoadMoreView.getContext(), eventList.getEventArrayList().get(i)));
                                             }
                                             mLoadMoreView.loadingDone();
                                         }
@@ -102,7 +102,7 @@ public class LoadMoreViewEventAhead {
     private Observable<EventList> getEventAheadList(int start)
     {
         final ApiInterface mApiService = ApiClient.getClient().create(ApiInterface.class);
-        return mApiService.RxGetEvents(start, LoadMoreViewEventAhead.LOAD_VIEW_SET_COUNT, 1)
+        return mApiService.RxGetEvents(start, LoadMoreViewEvent.LOAD_VIEW_SET_COUNT, 1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

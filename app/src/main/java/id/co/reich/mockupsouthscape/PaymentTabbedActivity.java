@@ -2,8 +2,6 @@ package id.co.reich.mockupsouthscape;
 
 
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.FragmentTransaction;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -18,8 +16,7 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
-import id.co.reich.mockupsouthscape.fragment.EventAheadFragment;
-import id.co.reich.mockupsouthscape.fragment.PaymentHistoryFragment;
+import id.co.reich.mockupsouthscape.fragment.PaymentFragment;
 
 public class PaymentTabbedActivity extends Activity {
 
@@ -123,7 +120,7 @@ public class PaymentTabbedActivity extends Activity {
         public Fragment getItem(int position) {
             if (position == 0)
             {
-                return PaymentHistoryFragment.newInstance();
+                return PaymentFragment.newInstance();
             }
 
             // getItem is called to instantiate the fragment for the given page.

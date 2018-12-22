@@ -29,8 +29,8 @@ import id.co.reich.mockupsouthscape.pojo.Payment;
 import id.co.reich.mockupsouthscape.rest.ApiClient;
 import id.co.reich.mockupsouthscape.rest.ApiInterface;
 import id.co.reich.mockupsouthscape.session.Constants;
-import id.co.reich.mockupsouthscape.view.ItemViewPaymentHistory;
-import id.co.reich.mockupsouthscape.view.LoadMoreViewPaymentHistory;
+import id.co.reich.mockupsouthscape.view.ItemViewPayment;
+import id.co.reich.mockupsouthscape.view.LoadMoreViewPayment;
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -42,12 +42,12 @@ import okhttp3.ResponseBody;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PaymentHistoryFragment.OnFragmentInteractionListener} interface
+ * {@link PaymentFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link PaymentHistoryFragment#newInstance} factory method to
+ * Use the {@link PaymentFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PaymentHistoryFragment extends Fragment {
+public class PaymentFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -66,7 +66,7 @@ public class PaymentHistoryFragment extends Fragment {
     private String mAuthTokenType;
     private ApiInterface mApiService;
 
-    public PaymentHistoryFragment() {
+    public PaymentFragment() {
         // Required empty public constructor
     }
 
@@ -74,11 +74,11 @@ public class PaymentHistoryFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment PaymentHistoryFragment.
+     * @return A new instance of fragment PaymentFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PaymentHistoryFragment newInstance() {
-        PaymentHistoryFragment fragment = new PaymentHistoryFragment();
+    public static PaymentFragment newInstance() {
+        PaymentFragment fragment = new PaymentFragment();
         return fragment;
     }
 
@@ -101,10 +101,10 @@ public class PaymentHistoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_payment_history, container, false);
+        View view = inflater.inflate(R.layout.fragment_payment, container, false);
 
-        mLoadMoreView = view.findViewById(R.id.loadMore_PaymentHistory);
-        mProgressView = view.findViewById(R.id.payment_history_progress);
+        mLoadMoreView = view.findViewById(R.id.loadMore_Payment);
+        mProgressView = view.findViewById(R.id.payment_progress);
 
         unbinder = ButterKnife.bind(this.getActivity());
 
@@ -218,7 +218,7 @@ public class PaymentHistoryFragment extends Fragment {
 
                             for (int i=0; i<arrayListPayment.size(); i++)
                             {
-                                mLoadMoreView.addView(new ItemViewPaymentHistory(getActivity(), arrayListPayment.get(i)));
+                                mLoadMoreView.addView(new ItemViewPayment(getActivity(), arrayListPayment.get(i)));
                             }
 
                             this.dispose();
@@ -226,7 +226,7 @@ public class PaymentHistoryFragment extends Fragment {
                     })
         );
 
-        mLoadMoreView.setLoadMoreResolver(new LoadMoreViewPaymentHistory(mLoadMoreView));
+        mLoadMoreView.setLoadMoreResolver(new LoadMoreViewPayment(mLoadMoreView));
     }
 
     private io.reactivex.Observable<List<Payment>> getPaymentList(Account account, final int begin, final int end, final String email, final String password)

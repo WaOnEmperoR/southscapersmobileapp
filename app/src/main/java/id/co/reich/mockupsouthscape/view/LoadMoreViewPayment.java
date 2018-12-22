@@ -33,7 +33,7 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
 @Layout(R.layout.load_more_view)
-public class LoadMoreViewPaymentHistory {
+public class LoadMoreViewPayment {
     public static final int LOAD_VIEW_SET_COUNT = 3;
 
     private InfinitePlaceHolderView mLoadMoreView;
@@ -43,7 +43,7 @@ public class LoadMoreViewPaymentHistory {
     private AccountManager mAccountManager;
     private String mPassword;
 
-    public LoadMoreViewPaymentHistory(InfinitePlaceHolderView loadMoreView) {
+    public LoadMoreViewPayment(InfinitePlaceHolderView loadMoreView) {
         this.mLoadMoreView = loadMoreView;
         mAuthTokenType = "id.co.reich.auth_southscapers";
 
@@ -90,7 +90,7 @@ public class LoadMoreViewPaymentHistory {
 
                         final ArrayList<Payment> arrayListPayment = new ArrayList<>();
 
-                        io.reactivex.Observable<List<Payment>> paymentListObservable = getPaymentList(account, count, LoadMoreViewPaymentHistory.LOAD_VIEW_SET_COUNT, user_email, mPassword);
+                        io.reactivex.Observable<List<Payment>> paymentListObservable = getPaymentList(account, count, LoadMoreViewPayment.LOAD_VIEW_SET_COUNT, user_email, mPassword);
 
                         disposable.add(
                                 paymentListObservable
@@ -127,7 +127,7 @@ public class LoadMoreViewPaymentHistory {
                                                 {
                                                     for (int i=0; i<arrayListPayment.size(); i++)
                                                     {
-                                                        mLoadMoreView.addView(new ItemViewPaymentHistory(mLoadMoreView.getContext(), arrayListPayment.get(i)));
+                                                        mLoadMoreView.addView(new ItemViewPayment(mLoadMoreView.getContext(), arrayListPayment.get(i)));
                                                     }
                                                 }
 

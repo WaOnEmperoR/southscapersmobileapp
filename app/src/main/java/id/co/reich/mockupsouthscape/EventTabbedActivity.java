@@ -2,8 +2,6 @@ package id.co.reich.mockupsouthscape;
 
 
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.FragmentTransaction;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
@@ -18,7 +16,7 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
-import id.co.reich.mockupsouthscape.fragment.EventAheadFragment;
+import id.co.reich.mockupsouthscape.fragment.EventFragment;
 
 public class EventTabbedActivity extends Activity {
 
@@ -106,7 +104,7 @@ public class EventTabbedActivity extends Activity {
 
             if (tab_number==-1)
             {
-                rootView = inflater.inflate(R.layout.fragment_event_ahead, container, false);
+                rootView = inflater.inflate(R.layout.fragment_event, container, false);
             }
             else
             {
@@ -133,9 +131,22 @@ public class EventTabbedActivity extends Activity {
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
+            Bundle bundle = new Bundle();
+            EventFragment eventFragment = new EventFragment();
+
             if (position == 0)
             {
-                return EventAheadFragment.newInstance();
+                bundle.putInt("event_choice", 1);
+                eventFragment.setArguments(bundle);
+
+                return eventFragment;
+            }
+            else if (position == 1)
+            {
+                bundle.putInt("event_choice", 2);
+                eventFragment.setArguments(bundle);
+
+                return eventFragment;
             }
 
             return PlaceholderFragment.newInstance(position + 1);
