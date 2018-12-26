@@ -23,10 +23,12 @@ public class LoadMoreViewEvent {
     public static final int LOAD_VIEW_SET_COUNT = 3;
 
     private InfinitePlaceHolderView mLoadMoreView;
+    private int mChoice;
     private CompositeDisposable disposable = new CompositeDisposable();
 
-    public LoadMoreViewEvent(InfinitePlaceHolderView loadMoreView) {
+    public LoadMoreViewEvent(InfinitePlaceHolderView loadMoreView, int choice) {
         this.mLoadMoreView = loadMoreView;
+        this.mChoice = choice;
     }
 
     @LoadMore
@@ -102,7 +104,7 @@ public class LoadMoreViewEvent {
     private Observable<EventList> getEventAheadList(int start)
     {
         final ApiInterface mApiService = ApiClient.getClient().create(ApiInterface.class);
-        return mApiService.RxGetEvents(start, LoadMoreViewEvent.LOAD_VIEW_SET_COUNT, 1)
+        return mApiService.RxGetEvents(start, LoadMoreViewEvent.LOAD_VIEW_SET_COUNT, mChoice)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

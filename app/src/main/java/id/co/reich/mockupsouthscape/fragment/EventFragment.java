@@ -128,7 +128,7 @@ public class EventFragment extends Fragment {
                     })
         );
 
-        mLoadMoreView.setLoadMoreResolver(new LoadMoreViewEvent(mLoadMoreView));
+        mLoadMoreView.setLoadMoreResolver(new LoadMoreViewEvent(mLoadMoreView, mChoice));
 
     }
 
