@@ -1,35 +1,214 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PaymentDetailActivity">
+    android:paddingLeft="@dimen/app_horizontal_margin"
+    android:paddingTop="@dimen/app_vertical_margin"
+    android:paddingRight="@dimen/app_horizontal_margin"
+    android:paddingBottom="@dimen/app_vertical_margin"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
 
-    <EditText
-        android:id="@+id/editText"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="45dp"
-        android:layout_marginBottom="21dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
-        app:layout_constraintBottom_toTopOf="@+id/editText2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <EditText
-        android:id="@+id/editText2"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="424dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Name"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText" />
-</android.support.constraint.ConstraintLayout>
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:gravity="left">
+
+        <TextView
+            android:id="@+id/tv_payment_session_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:text="@string/title_payment_session" />
+
+        <EditText
+            android:id="@+id/edt_payment_session"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:textSize="14dp"
+            android:text="@string/content_payment_session" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:gravity="left">
+
+        <TextView
+            android:id="@+id/tv_payment_type_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:text="@string/title_payment_type" />
+
+        <EditText
+            android:id="@+id/edt_payment_type"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:textSize="14dp"
+            android:text="@string/content_payment_type" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:gravity="left">
+
+        <TextView
+            android:id="@+id/tv_payment_submit_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:text="@string/title_payment_submit_date" />
+
+        <EditText
+            android:id="@+id/edt_payment_submit_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:textSize="14dp"
+            android:text="@string/content_submission_date" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imgView_proof"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/common_google_signin_btn_icon_dark_normal" />
+
+    <Button
+        android:id="@+id/btn_take_picture"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/title_take_picture" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:gravity="left">
+
+        <TextView
+            android:id="@+id/tv_payment_transfer_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:text="@string/title_payment_transfer_text" />
+
+        <EditText
+            android:id="@+id/edt_payment_transfer_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14dp"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:maxLines="8"
+            android:text="@string/content_payment_transfer_text" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:gravity="left">
+
+        <TextView
+            android:id="@+id/tv_payment_verification_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:text="@string/title_payment_verification_status" />
+
+        <EditText
+            android:id="@+id/edt_payment_verification_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14dp"
+            android:text="@string/content_payment_verification_status" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:gravity="left">
+
+        <TextView
+            android:id="@+id/tv_payment_verified_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:text="@string/title_payment_verified_date" />
+
+        <EditText
+            android:id="@+id/edt_payment_verified_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14dp"
+            android:text="@string/content_payment_verified_date" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:gravity="left">
+
+        <TextView
+            android:id="@+id/tv_payment_rejection_cause"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:text="@string/title_payment_rejection_cause" />
+
+        <EditText
+            android:id="@+id/edt_payment_rejection_cause"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14dp"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:maxLines="8"
+            android:text="Name" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btn_submit_payment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/title_submit_payment" />
+
+</LinearLayout>

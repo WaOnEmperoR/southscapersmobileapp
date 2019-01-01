@@ -49,10 +49,23 @@
 
     <!-- Strings related to payments -->
     <string name="title_payment_session">Payment Session</string>
+    <string name="content_payment_session">Session of Payment</string>
     <string name="title_payment_type">Payment Type</string>
+    <string name="content_payment_type">Type of Payment</string>
     <string name="title_payment_status">Verification Status</string>
+    <string name="content_payment_status">Status of Verification</string>
     <string name="title_payment_submit_date">Submit Date</string>
+    <string name="content_submission_date">Date of Submission</string>
     <string name="title_payment_verified_date">Verified Date</string>
+    <string name="content_payment_verified_date">Date of Verification</string>
     <string name="title_payment_rejection_cause">Rejection Cause</string>
+    <string name="content_payment_rejection_cause">Cause of Rejection</string>
+    <string name="title_payment_transfer_text">Transfer Text</string>
+    <string name="content_payment_transfer_text">Text of Transfer Proof</string>
+    <string name="title_take_picture">Take Photo from Camera or Gallery</string>
+    <string name="title_btn_submit_payment">Submit Payment</string>
+    <string name="title_payment_verification_status">Verification Status</string>
+    <string name="content_payment_verification_status">Status of Verification</string>
     <string name="title_activity_payment_tabbed">PaymentTabbedActivity</string>
+    <string name="title_submit_payment">Submit Payment</string>
 </resources>
