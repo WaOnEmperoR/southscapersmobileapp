@@ -97,7 +97,6 @@ public class ItemViewPayment {
             tv_verification_status.setText("Menunggu Verifikasi Bendahara");
         }
 
-
     }
 
 }

@@ -16,19 +16,29 @@ import com.mindorks.placeholderview.InfinitePlaceHolderView;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import id.co.reich.mockupsouthscape.AppController;
 import id.co.reich.mockupsouthscape.R;
+import id.co.reich.mockupsouthscape.pojo.Bill;
 import id.co.reich.mockupsouthscape.pojo.Payment;
 import id.co.reich.mockupsouthscape.rest.ApiClient;
 import id.co.reich.mockupsouthscape.rest.ApiInterface;
+import id.co.reich.mockupsouthscape.session.Constants;
+import id.co.reich.mockupsouthscape.view.ItemViewBill;
+import id.co.reich.mockupsouthscape.view.ItemViewPayment;
+import id.co.reich.mockupsouthscape.view.LoadMoreViewBill;
+import id.co.reich.mockupsouthscape.view.LoadMoreViewPayment;
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Function;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
@@ -93,7 +103,78 @@ public class BillFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_bill, container, false);
+        View view = inflater.inflate(R.layout.fragment_bill, container, false);
+
+        mLoadMoreView = view.findViewById(R.id.loadMore_Bill);
+        mProgressView = view.findViewById(R.id.bill_progress);
+
+        unbinder = ButterKnife.bind(this.getActivity());
+
+        mAuthTokenType = getString(R.string.auth_type);
+
+        HashMap<String, String> hashMap = app().getSession().getUserDetails();
+        String user_email = hashMap.get(Constants.KEY_EMAIL);
+
+        Account account = findAccount(user_email);
+        if (account!=null)
+        {
+            String mPassword = mAccountManager.getPassword(account);
+            Log.d(TAG, "Password : " + mPassword);
+
+            SetupView(account, 0, LoadMoreViewBill.LOAD_VIEW_SET_COUNT, user_email, mPassword);
+        }
+
+        return view;
+    }
+
+    private void SetupView(Account account, int begin, int end, String email, String password)
+    {
+        Log.d(this.getClass().getSimpleName(), "SetupView");
+        mProgressView.setVisibility(View.VISIBLE);
+
+        final ArrayList<Bill> arrayListBill = new ArrayList<>();
+
+        io.reactivex.Observable<List<Bill>> paymentListObservable = getBillList(account, begin, end, email, password);
+
+        disposable.add(
+                paymentListObservable
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .flatMap(new Function<List<Bill>, ObservableSource<Bill>>() {
+                            @Override
+                            public ObservableSource<Bill> apply(List<Bill> bills) throws Exception {
+                                return io.reactivex.Observable.fromIterable(bills);
+                            }
+                        })
+                        .subscribeWith(new DisposableObserver<Bill>() {
+                            @Override
+                            public void onNext(Bill bill) {
+                                Log.d(TAG, bill.getPaymentName());
+                                Log.d(TAG, bill.getPaymentSessionName());
+                                arrayListBill.add(bill);
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                Log.e(TAG, e.getMessage());
+                            }
+
+                            @Override
+                            public void onComplete() {
+                                Log.d(TAG, "onComplete from Setup View");
+                                mProgressView.setVisibility(View.GONE);
+
+                                for (int i=0; i<arrayListBill.size(); i++)
+                                {
+                                    mLoadMoreView.addView(new ItemViewBill(getActivity(), arrayListBill.get(i)));
+                                }
+
+                                this.dispose();
+                            }
+                        })
+        );
+
+        mLoadMoreView.setLoadMoreResolver(new LoadMoreViewBill(mLoadMoreView));
     }
 
     public Account findAccount(String accountName) {
@@ -142,7 +223,7 @@ public class BillFragment extends Fragment {
         });
     }
 
-    private io.reactivex.Observable<List<Payment>> getPaymentList(Account account, final int begin, final int end, final String email, final String password)
+    private io.reactivex.Observable<List<Bill>> getBillList(Account account, final int begin, final int end, final String email, final String password)
     {
         final ApiInterface mApiService = ApiClient.getClient().create(ApiInterface.class);
 
@@ -151,18 +232,18 @@ public class BillFragment extends Fragment {
         return tokenObservable
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .flatMap(new Function<String, ObservableSource<List<Payment>>>() {
+                .flatMap(new Function<String, ObservableSource<List<Bill>>>() {
                     @Override
-                    public ObservableSource<List<Payment>> apply(String s) throws Exception {
-                        return mApiService.RxGetPayments("application/json", "Bearer " + s, begin, end)
+                    public ObservableSource<List<Bill>> apply(String s) throws Exception {
+                        return mApiService.RxGetBills("application/json", "Bearer " + s, begin, end)
                                 .toObservable()
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread());
                     }
                 })
-                .onErrorResumeNext(new Function<Throwable, ObservableSource<List<Payment>>>() {
+                .onErrorResumeNext(new Function<Throwable, ObservableSource<List<Bill>>>() {
                     @Override
-                    public ObservableSource<List<Payment>> apply(Throwable throwable) throws Exception {
+                    public ObservableSource<List<Bill>> apply(Throwable throwable) throws Exception {
                         if (throwable.getMessage().equals("HTTP 401 "))
                         {
                             Log.d(TAG, "HTTP 401 Error Unauthorized : " + throwable.getMessage());
@@ -179,10 +260,10 @@ public class BillFragment extends Fragment {
                                             return jsonRESULTS.get("token").toString();
                                         }
                                     })
-                                    .flatMap(new Function<String, ObservableSource<List<Payment>>>() {
+                                    .flatMap(new Function<String, ObservableSource<List<Bill>>>() {
                                         @Override
-                                        public ObservableSource<List<Payment>> apply(String s) throws Exception {
-                                            return mApiService.RxGetPayments("application/json", "Bearer " + s, begin, end)
+                                        public ObservableSource<List<Bill>> apply(String s) throws Exception {
+                                            return mApiService.RxGetBills("application/json", "Bearer " + s, begin, end)
                                                     .toObservable()
                                                     .subscribeOn(Schedulers.io())
                                                     .observeOn(AndroidSchedulers.mainThread());

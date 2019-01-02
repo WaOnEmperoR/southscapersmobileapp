@@ -2,6 +2,7 @@ package id.co.reich.mockupsouthscape.rest;
 
 import java.util.List;
 
+import id.co.reich.mockupsouthscape.pojo.Bill;
 import id.co.reich.mockupsouthscape.pojo.EventList;
 import id.co.reich.mockupsouthscape.pojo.Payment;
 import id.co.reich.mockupsouthscape.pojo.PaymentList;
@@ -39,10 +40,10 @@ public interface ApiInterface {
                                       @Path("end") int end);
 
     @GET("payments_bill/{begin}/{end}")
-    Single<List<Payment>> RxGetBills(@Header("Accept") String accept,
-                                    @Header("Authorization") String auth,
-                                    @Path("begin") int begin,
-                                    @Path("end") int end);
+    Single<List<Bill>> RxGetBills(@Header("Accept") String accept,
+                                  @Header("Authorization") String auth,
+                                  @Path("begin") int begin,
+                                  @Path("end") int end);
 
     @FormUrlEncoded
     @POST("login")

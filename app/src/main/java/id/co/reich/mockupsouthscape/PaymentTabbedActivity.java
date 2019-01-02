@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 
 import android.widget.TextView;
 
+import id.co.reich.mockupsouthscape.fragment.BillFragment;
 import id.co.reich.mockupsouthscape.fragment.PaymentFragment;
 
 public class PaymentTabbedActivity extends Activity {
@@ -122,6 +123,10 @@ public class PaymentTabbedActivity extends Activity {
             {
                 return PaymentFragment.newInstance();
             }
+            else if (position == 1)
+            {
+                return BillFragment.newInstance();
+            }
 
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
@@ -130,8 +135,8 @@ public class PaymentTabbedActivity extends Activity {
 
         @Override
         public int getCount() {
-            // Show 3 total pages.
-            return 3;
+            // Show 2 total pages.
+            return 2;
         }
 
         @Override
@@ -140,9 +145,7 @@ public class PaymentTabbedActivity extends Activity {
                 case 0:
                     return "Payment History";
                 case 1:
-                    return "Unpaid Payment";
-                case 2:
-                    return "Submit Payment";
+                    return "Bills";
             }
             return null;
         }
