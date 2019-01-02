@@ -38,6 +38,12 @@ public interface ApiInterface {
                                       @Path("begin") int begin,
                                       @Path("end") int end);
 
+    @GET("payments_bill/{begin}/{end}")
+    Single<List<Payment>> RxGetBills(@Header("Accept") String accept,
+                                    @Header("Authorization") String auth,
+                                    @Path("begin") int begin,
+                                    @Path("end") int end);
+
     @FormUrlEncoded
     @POST("login")
     Observable<ResponseBody> RxLogin(@Field("email") String email,

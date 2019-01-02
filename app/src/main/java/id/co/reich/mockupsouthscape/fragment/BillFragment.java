@@ -16,38 +16,31 @@ import com.mindorks.placeholderview.InfinitePlaceHolderView;
 
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import id.co.reich.mockupsouthscape.AppController;
 import id.co.reich.mockupsouthscape.R;
 import id.co.reich.mockupsouthscape.pojo.Payment;
 import id.co.reich.mockupsouthscape.rest.ApiClient;
 import id.co.reich.mockupsouthscape.rest.ApiInterface;
-import id.co.reich.mockupsouthscape.session.Constants;
-import id.co.reich.mockupsouthscape.view.ItemViewPayment;
-import id.co.reich.mockupsouthscape.view.LoadMoreViewPayment;
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Function;
-import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PaymentFragment.OnFragmentInteractionListener} interface
+ * {@link BillFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link PaymentFragment#newInstance} factory method to
+ * Use the {@link BillFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PaymentFragment extends Fragment {
+public class BillFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -65,7 +58,7 @@ public class PaymentFragment extends Fragment {
     private final String TAG = this.getClass().getSimpleName();
     private String mAuthTokenType;
 
-    public PaymentFragment() {
+    public BillFragment() {
         // Required empty public constructor
     }
 
@@ -73,11 +66,11 @@ public class PaymentFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @return A new instance of fragment PaymentFragment.
+     * @return A new instance of fragment BillFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static PaymentFragment newInstance() {
-        PaymentFragment fragment = new PaymentFragment();
+    public static BillFragment newInstance() {
+        BillFragment fragment = new BillFragment();
         return fragment;
     }
 
@@ -100,30 +93,7 @@ public class PaymentFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_payment, container, false);
-
-        mLoadMoreView = view.findViewById(R.id.loadMore_Payment);
-        mProgressView = view.findViewById(R.id.payment_progress);
-
-        unbinder = ButterKnife.bind(this.getActivity());
-
-        mAuthTokenType = getString(R.string.auth_type);
-
-        HashMap<String, String> hashMap = app().getSession().getUserDetails();
-        String user_email = hashMap.get(Constants.KEY_EMAIL);
-
-        Account account = findAccount(user_email);
-        if (account!=null)
-        {
-            String mPassword = mAccountManager.getPassword(account);
-            Log.d(TAG, "Password : " + mPassword);
-
-            SetupView(account, 0, LoadMoreViewPayment.LOAD_VIEW_SET_COUNT, user_email, mPassword);
-        }
-
-        Log.d(this.getClass().getSimpleName(), "onCreateView");
-
-        return view;
+        return inflater.inflate(R.layout.fragment_bill, container, false);
     }
 
     public Account findAccount(String accountName) {
@@ -170,57 +140,6 @@ public class PaymentFragment extends Fragment {
                 return mAccountManager.blockingGetAuthToken(account, auth, status);
             }
         });
-    }
-
-    private void SetupView(Account account, int begin, int end, String email, String password)
-    {
-        Log.d(this.getClass().getSimpleName(), "SetupView");
-        mProgressView.setVisibility(View.VISIBLE);
-
-        final ArrayList<Payment> arrayListPayment = new ArrayList<>();
-
-        io.reactivex.Observable<List<Payment>> paymentListObservable = getPaymentList(account, begin, end, email, password);
-
-        disposable.add(
-                paymentListObservable
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .flatMap(new Function<List<Payment>, ObservableSource<Payment>>() {
-                        @Override
-                        public ObservableSource<Payment> apply(List<Payment> payments) throws Exception {
-                            return io.reactivex.Observable.fromIterable(payments);
-                        }
-                    })
-                    .subscribeWith(new DisposableObserver<Payment>() {
-                        @Override
-                        public void onNext(Payment payment) {
-                            Log.d(TAG, payment.getPaymentSubmitted());
-                            Log.d(TAG, payment.getPaymentType());
-                            Log.d(TAG, payment.getPaymentSession());
-                            arrayListPayment.add(payment);
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.e(TAG, e.getMessage());
-                        }
-
-                        @Override
-                        public void onComplete() {
-                            Log.d(TAG, "onComplete from Setup View");
-                            mProgressView.setVisibility(View.GONE);
-
-                            for (int i=0; i<arrayListPayment.size(); i++)
-                            {
-                                mLoadMoreView.addView(new ItemViewPayment(getActivity(), arrayListPayment.get(i)));
-                            }
-
-                            this.dispose();
-                        }
-                    })
-        );
-
-        mLoadMoreView.setLoadMoreResolver(new LoadMoreViewPayment(mLoadMoreView));
     }
 
     private io.reactivex.Observable<List<Payment>> getPaymentList(Account account, final int begin, final int end, final String email, final String password)
@@ -277,6 +196,4 @@ public class PaymentFragment extends Fragment {
                     }
                 });
     }
-
-
 }
