@@ -138,13 +138,12 @@ public class LoadMoreViewBill {
                         );
                     }
 
-
                 }
             });
         }
     }
 
-    private io.reactivex.Observable<List<Bill>> getBillList(Account account, final int begin, final int end, final String email, final String password)
+    private io.reactivex.Observable<List<Bill>> getBillList(final Account account, final int begin, final int end, final String email, final String password)
     {
         final ApiInterface mApiService = ApiClient.getClient().create(ApiInterface.class);
 
@@ -177,6 +176,7 @@ public class LoadMoreViewBill {
                                             JSONObject jsonRESULTS = new JSONObject(responseBody.string());
                                             String token = jsonRESULTS.get("token").toString();
                                             Log.d(TAG, "token from RxJava = " + token);
+                                            mAccountManager.setAuthToken(account, mAuthTokenType, token);
 
                                             return jsonRESULTS.get("token").toString();
                                         }
@@ -211,7 +211,6 @@ public class LoadMoreViewBill {
 
     public Account findAccount(String accountName) {
         for (Account account : mAccountManager.getAccounts()){
-            Log.d(TAG, "Account : " + account.name + "--" + account.type);
             if (TextUtils.equals(account.name, accountName) && TextUtils.equals(account.type, mAuthTokenType)) {
                 Log.d(TAG, "FOUND");
                 return account;

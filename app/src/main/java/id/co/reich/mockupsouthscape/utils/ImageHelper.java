@@ -1,4 +1,4 @@
-package id.co.reich.mockupsouthscape;
+package id.co.reich.mockupsouthscape.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

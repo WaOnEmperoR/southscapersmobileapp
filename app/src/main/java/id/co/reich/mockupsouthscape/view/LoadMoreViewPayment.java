@@ -119,7 +119,6 @@ public class LoadMoreViewPayment {
                                                 Log.d(TAG, "Array List Size : " + arrayListPayment.size());
                                                 if (arrayListPayment.size()==0)
                                                 {
-//                                                    mLoadMoreView.loadingDone();
                                                     mLoadMoreView.noMoreToLoad();
                                                     this.dispose();
                                                 }
@@ -145,7 +144,7 @@ public class LoadMoreViewPayment {
         }
     }
 
-    private io.reactivex.Observable<List<Payment>> getPaymentList(Account account, final int begin, final int end, final String email, final String password)
+    private io.reactivex.Observable<List<Payment>> getPaymentList(final Account account, final int begin, final int end, final String email, final String password)
     {
         final ApiInterface mApiService = ApiClient.getClient().create(ApiInterface.class);
 
@@ -178,6 +177,7 @@ public class LoadMoreViewPayment {
                                             JSONObject jsonRESULTS = new JSONObject(responseBody.string());
                                             String token = jsonRESULTS.get("token").toString();
                                             Log.d(TAG, "token from RxJava = " + token);
+                                            mAccountManager.setAuthToken(account, mAuthTokenType, token);
 
                                             return jsonRESULTS.get("token").toString();
                                         }
@@ -212,7 +212,6 @@ public class LoadMoreViewPayment {
 
     public Account findAccount(String accountName) {
         for (Account account : mAccountManager.getAccounts()){
-            Log.d(TAG, "Account : " + account.name + "--" + account.type);
             if (TextUtils.equals(account.name, accountName) && TextUtils.equals(account.type, mAuthTokenType)) {
                 Log.d(TAG, "FOUND");
                 return account;

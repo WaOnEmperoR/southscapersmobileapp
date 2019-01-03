@@ -47,7 +47,7 @@
     <string name="title_event_time">Event Time</string>
     <string name="title_event_place">Event Place</string>
 
-    <!-- Strings related to payments -->
+    <!-- Strings related to payments and bills -->
     <string name="title_payment_session">Payment Session</string>
     <string name="content_payment_session">Session of Payment</string>
     <string name="title_payment_type">Payment Type</string>
@@ -68,4 +68,7 @@
     <string name="content_payment_verification_status">Status of Verification</string>
     <string name="title_activity_payment_tabbed">PaymentTabbedActivity</string>
     <string name="title_submit_payment">Submit Payment</string>
+
+    <!-- Strings related to utils -->
+    <string name="pick_image_intent_text">Choose Source</string>
 </resources>

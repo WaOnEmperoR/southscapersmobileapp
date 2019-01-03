@@ -23,6 +23,7 @@ import java.util.HashMap;
 
 import id.co.reich.mockupsouthscape.fragment.GridFragment;
 import id.co.reich.mockupsouthscape.session.Constants;
+import id.co.reich.mockupsouthscape.utils.ImageHelper;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, GridFragment.OnFragmentInteractionListener {
 
